@@ -1,9 +1,8 @@
-const CACHE_NAME = 'fuel-atl-pwa-v1';
+const CACHE_NAME = 'fuel-atl-pwa-v2';
 const APP_SHELL = [
   '/',
   '/index.html',
-  '/manifest.webmanifest',
-  '/icons/icon.svg'
+  '/manifest.webmanifest'
 ];
 
 self.addEventListener('install', event => {
