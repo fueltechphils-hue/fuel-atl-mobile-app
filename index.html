@@ -10,8 +10,8 @@
   <meta name="apple-mobile-web-app-title" content="Fuel ATL" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="manifest" href="/manifest.webmanifest" />
-  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/icons/icon.svg" />
+  <link rel="icon" href="/api/icon?size=192" type="image/png" />
+  <link rel="apple-touch-icon" href="/api/icon?size=180" />
   <style>
     :root {
       --bg: #f4f7fb;
@@ -342,11 +342,12 @@
       border-radius: 16px;
       display: grid;
       place-items: center;
-      color: white;
+      color: transparent;
       font-weight: 950;
-      background: linear-gradient(135deg, #2563eb, #0f172a);
-      box-shadow: 0 16px 30px rgba(37, 99, 235, 0.25);
+      background: #ffffff url("/api/icon?size=180") center / cover no-repeat;
+      box-shadow: 0 16px 30px rgba(239, 68, 68, 0.22);
       flex: 0 0 auto;
+      overflow: hidden;
     }
 
     h1 {
@@ -1105,7 +1106,7 @@
     <header class="topbar">
       <div class="brand-row">
         <div class="brand">
-          <div class="logo">F</div>
+          <div class="logo" aria-label="LKB logo" role="img"></div>
           <div>
             <h1>Fuel ATL Purchase vs Payment</h1>
             <p class="subtitle">Mobile ATL purchases, staggered payments, deposit slips, and fund-health checking in Philippine pesos.</p>
