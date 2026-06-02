@@ -1,0 +1,19 @@
+{
+  "name": "Fuel ATL Purchase vs Payment",
+  "short_name": "Fuel ATL",
+  "description": "Mobile ATL purchase, payment, deposit slip, and fund-health app.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
