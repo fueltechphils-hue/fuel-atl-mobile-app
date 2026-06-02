@@ -1,0 +1,2263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fuel ATL Payment — Fund Health Check</title>
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Fuel ATL" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/icons/icon.svg" />
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --soft: #f8fafc;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --green: #16a34a;
+      --orange: #f97316;
+      --red: #dc2626;
+      --purple: #7c3aed;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(37, 99, 235, 0.12), transparent 28%),
+        radial-gradient(circle at 90% 12%, rgba(249, 115, 22, 0.12), transparent 25%),
+        var(--bg);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: var(--blue); }
+
+
+    .preview-stage {
+      min-height: 100vh;
+      display: grid;
+      justify-items: center;
+      align-items: start;
+      padding: 32px 18px 72px;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(37, 99, 235, 0.24), transparent 28%),
+        radial-gradient(circle at 80% 12%, rgba(249, 115, 22, 0.24), transparent 25%),
+        linear-gradient(145deg, #0f172a, #1e293b 45%, #020617);
+    }
+
+    .iphone-shell {
+      position: relative;
+      width: min(860px, calc(100vw - 36px));
+      height: 1820px;
+      min-height: 1180px;
+      padding: 26px;
+      border-radius: 92px;
+      background: linear-gradient(145deg, #020617, #111827 55%, #334155);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 35px 95px rgba(0, 0, 0, 0.52), inset 0 0 0 2px rgba(255, 255, 255, 0.06);
+    }
+
+    .iphone-speaker {
+      position: absolute;
+      z-index: 50;
+      top: 26px;
+      left: 50%;
+      width: 256px;
+      height: 58px;
+      transform: translateX(-50%);
+      border-radius: 0 0 34px 34px;
+      background: #020617;
+      box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+    }
+
+    .iphone-speaker::after {
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      width: 92px;
+      height: 9px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: #1e293b;
+    }
+
+    .iphone-screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-radius: 68px;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(37, 99, 235, 0.12), transparent 28%),
+        radial-gradient(circle at 90% 12%, rgba(249, 115, 22, 0.12), transparent 25%),
+        var(--bg);
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .iphone-screen::-webkit-scrollbar { width: 0; height: 0; }
+
+    .iphone-screen .app {
+      max-width: none;
+      padding: 30px 24px 42px;
+    }
+
+    .iphone-screen .topbar {
+      top: 0;
+      margin: -30px -24px 24px;
+      padding: 104px 24px 24px;
+    }
+
+    .iphone-screen .brand-row {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .iphone-screen .brand {
+      align-items: center;
+      flex-direction: row;
+      gap: 16px;
+    }
+
+    .iphone-screen .logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 24px;
+      font-size: 1.8rem;
+    }
+
+    .iphone-screen h1 {
+      font-size: 2.25rem;
+      line-height: 1.04;
+    }
+
+    .iphone-screen .subtitle {
+      font-size: 1.12rem;
+      line-height: 1.4;
+    }
+
+    .iphone-screen .toolbar {
+      justify-content: flex-start;
+      width: 100%;
+      gap: 12px;
+    }
+
+    .iphone-screen .btn {
+      padding: 15px 19px;
+      font-size: 1.08rem;
+    }
+
+    .iphone-screen .grid,
+    .iphone-screen .form-grid,
+    .iphone-screen .amount-row,
+    .iphone-screen .fund-grid,
+    .iphone-screen .fund-result {
+      grid-template-columns: 1fr;
+    }
+
+    .iphone-screen .summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .iphone-screen .summary-card {
+      min-height: 150px;
+      padding: 24px;
+      border-radius: 30px;
+    }
+
+    .iphone-screen .summary-value {
+      font-size: 2.18rem;
+    }
+
+    .iphone-screen .summary-card.outstanding-card {
+      grid-column: 1 / -1;
+      min-height: 260px;
+      padding: 34px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 58%, #2563eb);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 30px 70px rgba(37, 99, 235, 0.30);
+    }
+
+    .iphone-screen .summary-card.outstanding-card .summary-label {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 1.18rem;
+      letter-spacing: 0.13em;
+    }
+
+    .iphone-screen .summary-card.outstanding-card .summary-value {
+      margin-top: 14px;
+      font-size: clamp(4.2rem, 10vw, 7.2rem);
+      line-height: 0.92;
+      letter-spacing: -0.085em;
+    }
+
+    .iphone-screen .summary-card.outstanding-card .summary-note {
+      margin-top: 24px;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 1.25rem;
+    }
+
+    .iphone-screen .panel {
+      border-radius: 18px;
+    }
+
+    .iphone-screen .panel-header,
+    .iphone-screen .panel-body {
+      padding: 14px;
+    }
+
+    .iphone-screen .panel-header h2 {
+      font-size: 1rem;
+    }
+
+    .iphone-screen .panel-header p {
+      font-size: 0.82rem;
+    }
+
+    .iphone-screen .fund-status-card {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .iphone-screen .fund-status-card p {
+      text-align: left;
+    }
+
+    .iphone-screen .product-head {
+      display: none;
+    }
+
+    .iphone-screen .product-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      padding: 11px;
+    }
+
+    .iphone-screen .product-name,
+    .iphone-screen .line-total {
+      grid-column: 1 / -1;
+    }
+
+    .iphone-screen .field-caption {
+      display: block;
+    }
+
+    .iphone-screen .line-total {
+      text-align: left;
+      color: #1e3a8a;
+    }
+
+    .iphone-screen .purchase-top {
+      flex-direction: column;
+    }
+
+    .iphone-screen .status {
+      align-self: flex-start;
+    }
+
+    .iphone-screen .mini-table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .iphone-screen .filters input {
+      max-width: none;
+    }
+
+    @media (max-width: 480px) {
+      .preview-stage { padding: 0; }
+      .iphone-shell {
+        width: 100vw;
+        height: 100vh;
+        min-height: 100vh;
+        border-radius: 0;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+      }
+      .iphone-screen { border-radius: 0; }
+      .iphone-speaker { display: none; }
+      .iphone-screen .topbar { padding-top: 16px; }
+    }
+
+    .app {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin: -18px -18px 18px;
+      padding: 16px 18px 14px;
+      background: rgba(244, 247, 251, 0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      max-width: 1140px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 950;
+      background: linear-gradient(135deg, #2563eb, #0f172a);
+      box-shadow: 0 16px 30px rgba(37, 99, 235, 0.25);
+      flex: 0 0 auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.3rem, 3.8vw, 2rem);
+      letter-spacing: -0.05em;
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      color: #fff;
+      background: var(--blue);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 16px 28px rgba(37, 99, 235, 0.26); }
+    .btn:active { transform: translateY(0); }
+    .btn.secondary { color: var(--blue-dark); background: #dbeafe; box-shadow: none; }
+    .btn.success { background: var(--green); box-shadow: 0 12px 24px rgba(22, 163, 74, 0.22); }
+    .btn.warning { background: var(--orange); box-shadow: 0 12px 24px rgba(249, 115, 22, 0.22); }
+    .btn.danger { background: var(--red); box-shadow: none; }
+    .btn.dark { background: #0f172a; box-shadow: none; }
+    .btn.full { width: 100%; }
+    .btn.small { padding: 8px 11px; font-size: 0.82rem; }
+
+    .cloud-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #334155;
+      background: #fff;
+      font-size: 0.8rem;
+      font-weight: 950;
+      white-space: nowrap;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    .cloud-pill.online { color: #14532d; background: #dcfce7; border-color: #bbf7d0; }
+    .cloud-pill.syncing { color: #1e3a8a; background: #dbeafe; border-color: #bfdbfe; }
+    .cloud-pill.needs-pin { color: #9a3412; background: #ffedd5; border-color: #fed7aa; }
+    .cloud-pill.error { color: #7f1d1d; background: #fee2e2; border-color: #fecaca; }
+    .cloud-pill.local { color: #475569; background: #f8fafc; border-color: #e2e8f0; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(145px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      min-height: 106px;
+    }
+
+    .summary-card.outstanding-card {
+      grid-column: span 2;
+      min-height: 136px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 58%, #2563eb);
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 26px 58px rgba(37, 99, 235, 0.26);
+    }
+
+    .summary-card.outstanding-card .summary-label,
+    .summary-card.outstanding-card .summary-note {
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .summary-card.outstanding-card .summary-value {
+      font-size: clamp(2.35rem, 5vw, 3.8rem);
+      line-height: 0.95;
+    }
+
+    .summary-label {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 950;
+    }
+
+    .summary-value {
+      margin: 0;
+      font-size: clamp(1.35rem, 3.2vw, 1.9rem);
+      font-weight: 950;
+      letter-spacing: -0.05em;
+    }
+
+    .summary-note {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: -0.035em;
+    }
+
+    .panel-header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .panel-body { padding: 18px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      color: #334155;
+      font-size: 0.83rem;
+      font-weight: 950;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      background: #fff;
+      color: var(--ink);
+      padding: 12px 12px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    textarea { min-height: 82px; resize: vertical; }
+
+    .product-box {
+      grid-column: 1 / -1;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .product-head, .product-row {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1fr 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+    }
+
+    .product-head {
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 0.78rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .product-row { border-top: 1px solid var(--line); }
+    .product-name { font-weight: 950; }
+    .product-name small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 850;
+      letter-spacing: 0.02em;
+    }
+    .line-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .field-caption {
+      display: none;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .line-total { font-weight: 950; text-align: right; }
+    .line-total strong { display: block; }
+    .product-row input { padding: 10px 9px; border-radius: 12px; }
+    .product-guide {
+      padding: 10px 12px 12px;
+      border-top: 1px solid var(--line);
+      color: #1e3a8a;
+      background: #eff6ff;
+      font-size: 0.84rem;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .total-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      grid-column: 1 / -1;
+      margin-top: 2px;
+      padding: 14px;
+      border-radius: 18px;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-weight: 950;
+    }
+
+    .payment-panel {
+      outline: 0 solid rgba(37, 99, 235, 0);
+      transition: outline 0.25s ease;
+    }
+    .payment-panel.is-open {
+      outline: 6px solid rgba(37, 99, 235, 0.12);
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .notice {
+      display: none;
+      margin: 0 0 14px;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+    .notice.show { display: block; }
+    .notice.success { color: #14532d; background: #dcfce7; border: 1px solid #bbf7d0; }
+    .notice.error { color: #7f1d1d; background: #fee2e2; border: 1px solid #fecaca; }
+    .notice.info { color: #1e3a8a; background: #dbeafe; border: 1px solid #bfdbfe; }
+
+    .list-panel { margin-top: 18px; }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .filters input { max-width: 360px; }
+
+    .purchase-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .purchase-card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 8px 28px rgba(15, 23, 42, 0.05);
+    }
+
+    .purchase-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+    }
+
+    .purchase-title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .purchase-meta {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .status {
+      align-self: start;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 0.78rem;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+    .status.open { color: #9a3412; background: #ffedd5; }
+    .status.partial { color: #1e3a8a; background: #dbeafe; }
+    .status.paid { color: #14532d; background: #dcfce7; }
+    .status.credit { color: #581c87; background: #f3e8ff; }
+
+    .purchase-body { padding: 14px; }
+
+    .amount-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .amount-box {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 10px;
+      background: #fff;
+    }
+    .amount-box span { display: block; color: var(--muted); font-size: 0.76rem; font-weight: 950; text-transform: uppercase; letter-spacing: 0.05em; }
+    .amount-box strong { display: block; margin-top: 4px; font-size: 1rem; letter-spacing: -0.03em; }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px;
+      overflow: hidden;
+      border-radius: 14px;
+      font-size: 0.9rem;
+    }
+    .mini-table th, .mini-table td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+    .mini-table th { background: #f8fafc; color: var(--muted); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .mini-table td:last-child, .mini-table th:last-child { text-align: right; }
+
+    .timeline {
+      display: grid;
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .payment-item {
+      border: 1px solid #dbeafe;
+      border-radius: 15px;
+      background: #eff6ff;
+      padding: 10px;
+    }
+    .payment-item strong { display: block; color: #1e3a8a; }
+    .payment-item span { display: block; margin-top: 3px; color: #334155; font-size: 0.84rem; font-weight: 700; line-height: 1.45; }
+
+    .empty {
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      padding: 22px;
+      text-align: center;
+      color: var(--muted);
+      background: #fff;
+      font-weight: 800;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+
+
+    .selected-target {
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-weight: 900;
+      line-height: 1.4;
+    }
+
+
+
+    .fund-panel { margin: 0 0 18px; }
+
+    .fund-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .fund-result {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .fund-box,
+    .fund-status-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .fund-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .fund-box strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 1.08rem;
+      letter-spacing: -0.035em;
+    }
+
+    .fund-status-card {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: #334155;
+      background: #f8fafc;
+    }
+
+    .fund-status-card strong {
+      font-size: 1.42rem;
+      letter-spacing: -0.05em;
+    }
+
+    .fund-status-card p {
+      margin: 0;
+      color: inherit;
+      font-size: 0.9rem;
+      font-weight: 800;
+      line-height: 1.45;
+      text-align: right;
+    }
+
+    .fund-status-card.healthy { color: #14532d; background: #dcfce7; border-color: #bbf7d0; }
+    .fund-status-card.watch { color: #9a3412; background: #ffedd5; border-color: #fed7aa; }
+    .fund-status-card.critical { color: #7f1d1d; background: #fee2e2; border-color: #fecaca; }
+    .fund-status-card.neutral { color: #334155; background: #f8fafc; border-color: var(--line); }
+
+    .summary-card.fund-card.healthy .summary-value { color: var(--green); }
+    .summary-card.fund-card.watch .summary-value { color: var(--orange); }
+    .summary-card.fund-card.critical .summary-value { color: var(--red); }
+    .summary-card.fund-card.neutral .summary-value { color: var(--muted); }
+
+    .file-preview {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .footer-note {
+      margin: 18px 0 4px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .preview-stage {
+      display: block;
+      min-height: 100vh;
+      padding: 0;
+      background: var(--bg);
+    }
+
+    .iphone-shell {
+      width: 100%;
+      height: auto;
+      min-height: 100vh;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .iphone-speaker { display: none; }
+
+    .iphone-screen {
+      height: auto;
+      min-height: 100vh;
+      overflow: visible;
+      border-radius: 0;
+    }
+
+    .iphone-screen .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .iphone-screen .topbar {
+      margin: -18px -18px 18px;
+      padding: 16px 18px 14px;
+    }
+
+    .iphone-screen .brand-row {
+      align-items: center;
+      flex-direction: row;
+      gap: 14px;
+    }
+
+    .iphone-screen .brand {
+      align-items: center;
+      flex-direction: row;
+      gap: 12px;
+    }
+
+    .iphone-screen .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      font-size: 1rem;
+    }
+
+    .iphone-screen h1 {
+      font-size: clamp(1.3rem, 3.8vw, 2rem);
+      letter-spacing: -0.05em;
+      line-height: 1.05;
+    }
+
+    .iphone-screen .subtitle {
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .iphone-screen .toolbar {
+      justify-content: flex-end;
+      width: auto;
+      gap: 8px;
+    }
+
+    .iphone-screen .btn {
+      padding: 10px 14px;
+      font-size: 1rem;
+    }
+
+    .iphone-screen .summary-grid {
+      grid-template-columns: repeat(5, minmax(145px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .iphone-screen .summary-card {
+      min-height: 106px;
+      padding: 16px;
+      border-radius: var(--radius);
+    }
+
+    .iphone-screen .summary-value {
+      font-size: clamp(1.35rem, 3.2vw, 1.9rem);
+      letter-spacing: -0.05em;
+      line-height: normal;
+    }
+
+    .iphone-screen .summary-card.outstanding-card {
+      grid-column: span 2;
+      min-height: 136px;
+      padding: 16px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 58%, #2563eb);
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 26px 58px rgba(37, 99, 235, 0.26);
+    }
+
+    .iphone-screen .summary-card.outstanding-card .summary-label {
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+    }
+
+    .iphone-screen .summary-card.outstanding-card .summary-value {
+      margin-top: 0;
+      font-size: clamp(2.35rem, 5vw, 3.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+    }
+
+    .iphone-screen .summary-card.outstanding-card .summary-note {
+      margin-top: 8px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.86rem;
+    }
+
+    .iphone-screen .grid { grid-template-columns: 1fr 1fr; }
+    .iphone-screen .form-grid { grid-template-columns: 1fr 1fr; }
+    .iphone-screen .amount-row { grid-template-columns: repeat(3, 1fr); }
+    .iphone-screen .fund-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .iphone-screen .fund-result { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+    .iphone-screen .panel { border-radius: var(--radius); }
+    .iphone-screen .panel-header,
+    .iphone-screen .panel-body { padding: 18px; }
+    .iphone-screen .panel-header h2 { font-size: 1.1rem; }
+    .iphone-screen .panel-header p { font-size: 0.92rem; }
+
+    .iphone-screen .fund-status-card {
+      align-items: center;
+      flex-direction: row;
+    }
+
+    .iphone-screen .fund-status-card p { text-align: right; }
+    .iphone-screen .product-head { display: grid; }
+    .iphone-screen .product-row {
+      grid-template-columns: 1.1fr 1fr 1fr 1fr;
+      gap: 10px;
+      padding: 10px 12px;
+    }
+    .iphone-screen .product-name { grid-column: auto; }
+    .iphone-screen .field-caption { display: none; }
+    .iphone-screen .line-total {
+      grid-column: auto;
+      text-align: right;
+      color: inherit;
+    }
+    .iphone-screen .purchase-top { flex-direction: row; }
+    .iphone-screen .status { align-self: start; }
+    .iphone-screen .mini-table {
+      display: table;
+      overflow-x: visible;
+      white-space: normal;
+    }
+    .iphone-screen .filters input { max-width: 360px; }
+
+    @media (max-width: 900px) {
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .summary-card.outstanding-card { grid-column: 1 / -1; }
+      .grid { grid-template-columns: 1fr; }
+      .brand-row { align-items: flex-start; flex-direction: column; }
+      .toolbar { justify-content: flex-start; }
+      .iphone-screen .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .iphone-screen .summary-card.outstanding-card { grid-column: 1 / -1; }
+      .iphone-screen .grid { grid-template-columns: 1fr; }
+      .iphone-screen .brand-row { align-items: flex-start; flex-direction: column; }
+      .iphone-screen .toolbar { justify-content: flex-start; width: 100%; }
+    }
+
+    @media (max-width: 560px) {
+      .app { padding: 12px; }
+      .topbar { margin: -12px -12px 14px; padding: 14px 12px 12px; }
+      .summary-grid { grid-template-columns: 1fr; gap: 10px; }
+      .summary-card { min-height: auto; }
+      .form-grid { grid-template-columns: 1fr; }
+      .product-head { display: none; }
+      .product-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+      }
+      .product-name { grid-column: 1 / -1; }
+      .field-caption { display: block; }
+      .line-total { grid-column: 1 / -1; text-align: left; color: #1e3a8a; }
+      .amount-row,
+      .fund-grid,
+      .fund-result { grid-template-columns: 1fr; }
+      .purchase-top { flex-direction: column; }
+      .status { align-self: flex-start; }
+      .mini-table { display: block; overflow-x: auto; white-space: nowrap; }
+      .iphone-screen .app { padding: 12px; }
+      .iphone-screen .topbar { margin: -12px -12px 14px; padding: calc(14px + env(safe-area-inset-top)) 12px 12px; }
+      .iphone-screen .summary-grid { grid-template-columns: 1fr; gap: 10px; }
+      .iphone-screen .summary-card { min-height: auto; }
+      .iphone-screen .form-grid { grid-template-columns: 1fr; }
+      .iphone-screen .product-head { display: none; }
+      .iphone-screen .product-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+      }
+      .iphone-screen .product-name { grid-column: 1 / -1; }
+      .iphone-screen .field-caption { display: block; }
+      .iphone-screen .line-total {
+        grid-column: 1 / -1;
+        text-align: left;
+        color: #1e3a8a;
+      }
+      .iphone-screen .amount-row,
+      .iphone-screen .fund-grid,
+      .iphone-screen .fund-result { grid-template-columns: 1fr; }
+      .iphone-screen .purchase-top { flex-direction: column; }
+      .iphone-screen .status { align-self: flex-start; }
+      .iphone-screen .mini-table { display: block; overflow-x: auto; white-space: nowrap; }
+      .cloud-pill { min-height: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="preview-stage" aria-label="iPhone preview">
+    <section class="iphone-shell" aria-label="iPhone frame">
+      <div class="iphone-speaker" aria-hidden="true"></div>
+      <div class="iphone-screen">
+        <div class="app">
+    <header class="topbar">
+      <div class="brand-row">
+        <div class="brand">
+          <div class="logo">F</div>
+          <div>
+            <h1>Fuel ATL Purchase vs Payment</h1>
+            <p class="subtitle">Mobile ATL purchases, staggered payments, deposit slips, and fund-health checking in Philippine pesos.</p>
+          </div>
+        </div>
+        <div class="toolbar">
+          <span class="cloud-pill local" id="cloudStatus">Local mode</span>
+          <button class="btn secondary" type="button" id="syncBtn">Sync Cloud</button>
+          <button class="btn secondary" type="button" id="pinBtn">Cloud PIN</button>
+          <button class="btn secondary" type="button" id="loadSampleBtn">Load Sample</button>
+          <button class="btn dark" type="button" id="exportBtn">Export JSON</button>
+          <button class="btn danger" type="button" id="resetBtn">Reset</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="summary-grid" aria-label="Total summary">
+      <article class="summary-card outstanding-card">
+        <p class="summary-label">Outstanding Balance</p>
+        <p class="summary-value" id="summaryOutstanding">₱0.00</p>
+        <p class="summary-note" id="summaryOpen">0 open purchases</p>
+      </article>
+      <article class="summary-card fund-card neutral" id="summaryFundCard">
+        <p class="summary-label">Fund Health</p>
+        <p class="summary-value" id="summaryFundStatus">SET FUNDS</p>
+        <p class="summary-note" id="summaryFundNote">Enter UGT cash, bank balance, and sales for deposit.</p>
+      </article>
+      <article class="summary-card">
+        <p class="summary-label">Total Purchases</p>
+        <p class="summary-value" id="summaryPurchase">₱0.00</p>
+        <p class="summary-note" id="summaryPurchaseCount">0 purchase records</p>
+      </article>
+      <article class="summary-card">
+        <p class="summary-label">Total Payments</p>
+        <p class="summary-value" id="summaryPayment">₱0.00</p>
+        <p class="summary-note" id="summaryCredit">₱0.00 supplier credit</p>
+      </article>
+      <article class="summary-card">
+        <p class="summary-label">Product Capacity</p>
+        <p class="summary-value" id="summaryLitres">0 L</p>
+        <p class="summary-note" id="summaryProductBreakdown">Premium 0 L @ ₱0.00/L • Regular 0 L @ ₱0.00/L • Diesel 0 L @ ₱0.00/L</p>
+      </article>
+      <article class="summary-card">
+        <p class="summary-label">Selected Balance</p>
+        <p class="summary-value" id="summarySelectedBalance">₱0.00</p>
+        <p class="summary-note" id="summarySelectedLabel">No purchase selected</p>
+      </article>
+    </section>
+
+    <div id="notice" class="notice"></div>
+
+    <section class="panel fund-panel" id="fundPanel">
+      <div class="panel-header">
+        <h2>Fund Health Check</h2>
+        <p>Check whether total UGT value converted to cash, bank balance, and sales for deposit are enough to cover all open ATL balances.</p>
+      </div>
+      <div class="panel-body">
+        <form id="fundForm" class="form-grid" autocomplete="off">
+          <div class="field">
+            <label for="ugtCash">Total UGT Value Converted to Cash (₱)</label>
+            <input id="ugtCash" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
+          </div>
+          <div class="field">
+            <label for="bankBalance">Total Balance on the Bank (₱)</label>
+            <input id="bankBalance" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
+          </div>
+          <div class="field">
+            <label for="salesForDeposit">Total Sales for Deposit (₱)</label>
+            <input id="salesForDeposit" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
+          </div>
+          <div class="field full">
+            <button class="btn success full" type="submit">Update Fund Health</button>
+            <p class="hint">Healthy means total available funds cover the outstanding balance with at least 10% buffer. Watch means covered but buffer is below 10%. Critical means funds are below outstanding balance.</p>
+          </div>
+        </form>
+
+        <div class="fund-result" aria-label="Fund health result">
+          <div class="fund-box"><span>Total Funds Available</span><strong id="fundTotalAvailable">₱0.00</strong></div>
+          <div class="fund-box"><span>Outstanding to Cover</span><strong id="fundOutstanding">₱0.00</strong></div>
+          <div class="fund-box"><span>10% Buffer Target</span><strong id="fundBufferTarget">₱0.00</strong></div>
+          <div class="fund-box"><span>Coverage / Shortfall</span><strong id="fundCoverage">₱0.00</strong></div>
+          <div class="fund-box"><span>Bank After Full Pay</span><strong id="fundBankAfterPay">₱0.00</strong></div>
+          <div class="fund-status-card neutral" id="fundStatusCard">
+            <strong id="fundStatusText">SET FUNDS</strong>
+            <p id="fundStatusDetail">Enter fund values to check if funds are healthy.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="grid">
+      <section class="panel" id="purchasePanel">
+        <div class="panel-header">
+          <h2>1. Execute Purchase</h2>
+          <p>Register one ATL purchase with separate Premium, Regular, and Diesel capacity and price per liter.</p>
+        </div>
+        <div class="panel-body">
+          <form id="purchaseForm" class="form-grid" autocomplete="off">
+            <div class="field">
+              <label for="supplier">Supplier</label>
+              <input id="supplier" name="supplier" placeholder="Example: Mabuhay Fuel Depot" required />
+            </div>
+            <div class="field">
+              <label for="atlNumber">ATL Number</label>
+              <input id="atlNumber" name="atlNumber" placeholder="Example: ATL-1050" required />
+            </div>
+            <div class="field">
+              <label for="purchaseDate">Purchase Date</label>
+              <input id="purchaseDate" name="purchaseDate" type="date" required />
+            </div>
+
+            <div class="product-box">
+              <div class="product-head">
+                <div>Product</div>
+                <div>Liter Capacity (L)</div>
+                <div>Price per Liter (₱/L)</div>
+                <div style="text-align:right;">Product Total</div>
+              </div>
+              <div class="product-row" data-product="Premium">
+                <div class="product-name">Premium<small>Fuel product</small></div>
+                <label class="line-field">
+                  <span class="field-caption">Liter Capacity (L)</span>
+                  <input type="number" min="0" step="0.01" inputmode="decimal" data-litres="Premium" aria-label="Premium liter capacity" placeholder="Liters, e.g. 4,000" />
+                </label>
+                <label class="line-field">
+                  <span class="field-caption">Price per Liter (₱/L)</span>
+                  <input type="number" min="0" step="0.0001" inputmode="decimal" data-price="Premium" aria-label="Premium price per liter" placeholder="₱/L, e.g. 67.50" />
+                </label>
+                <div class="line-total"><span class="field-caption">Product Total</span><strong data-total="Premium">₱0.00</strong></div>
+              </div>
+              <div class="product-row" data-product="Regular">
+                <div class="product-name">Regular<small>Fuel product</small></div>
+                <label class="line-field">
+                  <span class="field-caption">Liter Capacity (L)</span>
+                  <input type="number" min="0" step="0.01" inputmode="decimal" data-litres="Regular" aria-label="Regular liter capacity" placeholder="Liters, e.g. 6,000" />
+                </label>
+                <label class="line-field">
+                  <span class="field-caption">Price per Liter (₱/L)</span>
+                  <input type="number" min="0" step="0.0001" inputmode="decimal" data-price="Regular" aria-label="Regular price per liter" placeholder="₱/L, e.g. 64.20" />
+                </label>
+                <div class="line-total"><span class="field-caption">Product Total</span><strong data-total="Regular">₱0.00</strong></div>
+              </div>
+              <div class="product-row" data-product="Diesel">
+                <div class="product-name">Diesel<small>Fuel product</small></div>
+                <label class="line-field">
+                  <span class="field-caption">Liter Capacity (L)</span>
+                  <input type="number" min="0" step="0.01" inputmode="decimal" data-litres="Diesel" aria-label="Diesel liter capacity" placeholder="Liters, e.g. 8,000" />
+                </label>
+                <label class="line-field">
+                  <span class="field-caption">Price per Liter (₱/L)</span>
+                  <input type="number" min="0" step="0.0001" inputmode="decimal" data-price="Diesel" aria-label="Diesel price per liter" placeholder="₱/L, e.g. 59.80" />
+                </label>
+                <div class="line-total"><span class="field-caption">Product Total</span><strong data-total="Diesel">₱0.00</strong></div>
+              </div>
+              <div class="product-guide">Enter the liter capacity and price per liter for each product. Product Total = Liter Capacity × Price per Liter.</div>
+            </div>
+
+            <div class="total-strip">
+              <span>Purchase Total</span>
+              <span id="purchaseDraftTotal">₱0.00</span>
+            </div>
+
+            <div class="field full">
+              <label for="purchaseNotes">Purchase Notes</label>
+              <textarea id="purchaseNotes" placeholder="Optional notes, delivery remarks, truck number, etc."></textarea>
+            </div>
+
+            <div class="field full">
+              <button class="btn success full" type="submit">Execute Purchase</button>
+              <p class="hint">After executing, the ATL is registered and the payment update section opens automatically.</p>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="panel payment-panel" id="paymentPanel">
+        <div class="panel-header">
+          <h2>2. Update Payment Anytime</h2>
+          <p>Use the selected ATL, choose any payment date, add partial or full amount, and attach a bank deposit slip.</p>
+        </div>
+        <div class="panel-body">
+          <form id="paymentForm" class="form-grid" autocomplete="off">
+            <input id="paymentPurchaseId" type="hidden" value="" />
+            <div class="field full">
+              <label>Selected ATL</label>
+              <div class="selected-target" id="selectedPaymentTarget">No ATL selected yet. Execute a purchase or tap Update Payment on a registered ATL.</div>
+            </div>
+            <div class="field">
+              <label for="paymentDate">Payment Date</label>
+              <input id="paymentDate" type="date" required />
+            </div>
+            <div class="field">
+              <label for="paymentAmount">Payment Amount (PHP ₱)</label>
+              <input id="paymentAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" required />
+            </div>
+            <div class="field">
+              <label for="paymentMethod">Payment Method</label>
+              <select id="paymentMethod">
+                <option>Bank Transfer</option>
+                <option>Cash Deposit</option>
+                <option>Cheque</option>
+                <option>Online Payment</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="paymentReference">Bank Reference No.</label>
+              <input id="paymentReference" placeholder="Example: BDO-DEP-0001" />
+            </div>
+            <div class="field full">
+              <label for="depositSlip">Attach Deposit Slip</label>
+              <input id="depositSlip" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.txt,image/*,application/pdf,text/plain" />
+              <div class="file-preview" id="filePreview">No file selected. Attach PDF, image, or text deposit slip.</div>
+            </div>
+            <div class="field full">
+              <button class="btn warning full" type="submit">Update Payment</button>
+              <p class="hint">The payment date is open, so you can add payments anytime you pay the supplier.</p>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <section class="panel list-panel">
+      <div class="panel-header">
+        <h2>Registered ATL Purchases & Payment Timeline</h2>
+        <p>Each ATL shows liter capacity, price per liter, product total, paid amount, remaining balance, and attached payment slips.</p>
+      </div>
+      <div class="panel-body">
+        <div class="filters">
+          <input id="searchBox" placeholder="Search supplier, ATL, product, reference..." />
+          <select id="statusFilter" aria-label="Status filter">
+            <option value="all">All statuses</option>
+            <option value="open">Open</option>
+            <option value="partial">Partial</option>
+            <option value="paid">Paid</option>
+            <option value="credit">Credit</option>
+          </select>
+        </div>
+        <div class="purchase-list" id="purchaseList"></div>
+      </div>
+    </section>
+
+    <p class="footer-note">Online-ready mobile app. Currency: Philippine pesos (PHP ₱). Includes fund-health check for UGT cash, bank balance, and sales for deposit.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'fuel_atl_payment_iphone_php_v5_atl_fund_health';
+    const CLOUD_PIN_KEY = 'fuel_atl_cloud_pin';
+    ['fuel_purchase_payment_test_index_v1','fuel_purchase_payment_test_index_php_v2','fuel_atl_payment_iphone_php_v1','fuel_atl_payment_iphone_php_v3_capacity_price','fuel_atl_payment_iphone_php_v4_fund_health'].forEach(k => localStorage.removeItem(k));
+    const PRODUCTS = ['Premium', 'Regular', 'Diesel'];
+
+    const els = {
+      notice: document.getElementById('notice'),
+      supplier: document.getElementById('supplier'),
+      atlNumber: document.getElementById('atlNumber'),
+      purchaseDate: document.getElementById('purchaseDate'),
+      purchaseNotes: document.getElementById('purchaseNotes'),
+      purchaseForm: document.getElementById('purchaseForm'),
+      purchaseDraftTotal: document.getElementById('purchaseDraftTotal'),
+      paymentPanel: document.getElementById('paymentPanel'),
+      paymentForm: document.getElementById('paymentForm'),
+      paymentPurchaseId: document.getElementById('paymentPurchaseId'),
+      selectedPaymentTarget: document.getElementById('selectedPaymentTarget'),
+      paymentDate: document.getElementById('paymentDate'),
+      paymentAmount: document.getElementById('paymentAmount'),
+      paymentMethod: document.getElementById('paymentMethod'),
+      paymentReference: document.getElementById('paymentReference'),
+      depositSlip: document.getElementById('depositSlip'),
+      filePreview: document.getElementById('filePreview'),
+      purchaseList: document.getElementById('purchaseList'),
+      searchBox: document.getElementById('searchBox'),
+      statusFilter: document.getElementById('statusFilter'),
+      fundForm: document.getElementById('fundForm'),
+      ugtCash: document.getElementById('ugtCash'),
+      bankBalance: document.getElementById('bankBalance'),
+      salesForDeposit: document.getElementById('salesForDeposit'),
+      fundTotalAvailable: document.getElementById('fundTotalAvailable'),
+      fundOutstanding: document.getElementById('fundOutstanding'),
+      fundBufferTarget: document.getElementById('fundBufferTarget'),
+      fundCoverage: document.getElementById('fundCoverage'),
+      fundBankAfterPay: document.getElementById('fundBankAfterPay'),
+      fundStatusCard: document.getElementById('fundStatusCard'),
+      fundStatusText: document.getElementById('fundStatusText'),
+      fundStatusDetail: document.getElementById('fundStatusDetail'),
+      cloudStatus: document.getElementById('cloudStatus'),
+      syncBtn: document.getElementById('syncBtn'),
+      pinBtn: document.getElementById('pinBtn'),
+      loadSampleBtn: document.getElementById('loadSampleBtn'),
+      exportBtn: document.getElementById('exportBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      summaryOutstanding: document.getElementById('summaryOutstanding'),
+      summaryOpen: document.getElementById('summaryOpen'),
+      summaryFundCard: document.getElementById('summaryFundCard'),
+      summaryFundStatus: document.getElementById('summaryFundStatus'),
+      summaryFundNote: document.getElementById('summaryFundNote'),
+      summaryPurchase: document.getElementById('summaryPurchase'),
+      summaryPurchaseCount: document.getElementById('summaryPurchaseCount'),
+      summaryPayment: document.getElementById('summaryPayment'),
+      summaryCredit: document.getElementById('summaryCredit'),
+      summaryLitres: document.getElementById('summaryLitres'),
+      summaryProductBreakdown: document.getElementById('summaryProductBreakdown'),
+      summarySelectedBalance: document.getElementById('summarySelectedBalance'),
+      summarySelectedLabel: document.getElementById('summarySelectedLabel')
+    };
+
+    let state = loadState();
+    let selectedAttachment = null;
+    const cloud = {
+      available: false,
+      configured: false,
+      pin: localStorage.getItem(CLOUD_PIN_KEY) || '',
+      saveTimer: null
+    };
+
+    function today() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function addDays(dateString, days) {
+      const date = new Date(dateString + 'T00:00:00');
+      date.setDate(date.getDate() + days);
+      return date.toISOString().slice(0, 10);
+    }
+
+    function makeId(prefix) {
+      if (window.crypto && crypto.randomUUID) return prefix + '-' + crypto.randomUUID().slice(0, 8).toUpperCase();
+      return prefix + '-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    }
+
+    function money(value) {
+      return Number(value || 0).toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+    }
+
+    function litres(value) {
+      return Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' L';
+    }
+
+    function numberValue(value) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function normalizeAtlKey(value) {
+      return String(value || '').trim().replace(/\s+/g, ' ').toUpperCase();
+    }
+
+    function purchaseAtlNumber(purchase) {
+      return String((purchase && purchase.atlNumber) || '').trim();
+    }
+
+    function normalizeLines(lines) {
+      const rawLines = Array.isArray(lines) ? lines : [];
+      return PRODUCTS.map(product => {
+        const line = rawLines.find(item => item && item.product === product) || {};
+        return {
+          product,
+          litres: roundMoney(numberValue(line.litres)),
+          unitPrice: Math.round(numberValue(line.unitPrice) * 10000) / 10000
+        };
+      });
+    }
+
+    function normalizePurchase(purchase) {
+      const { lines, payments, ...rest } = purchase || {};
+      return {
+        ...rest,
+        atlNumber: purchaseAtlNumber(purchase),
+        lines: normalizeLines(lines),
+        payments: Array.isArray(payments) ? payments : []
+      };
+    }
+
+    function uniqueAtlNumber(baseNumber) {
+      const base = String(baseNumber || 'ATL').trim();
+      const used = new Set(state.purchases.map(purchase => normalizeAtlKey(purchaseAtlNumber(purchase))));
+      if (!used.has(normalizeAtlKey(base))) return base;
+      let suffix = 2;
+      while (used.has(normalizeAtlKey(`${base}-${suffix}`))) suffix += 1;
+      return `${base}-${suffix}`;
+    }
+
+    function defaultFunds() {
+      return { ugtCash: 0, bankBalance: 0, salesForDeposit: 0, updatedAt: '' };
+    }
+
+    function defaultState() {
+      return { purchases: [], funds: defaultFunds() };
+    }
+
+    function normalizeState(value) {
+      const parsed = value && typeof value === 'object' ? value : {};
+      return {
+        purchases: Array.isArray(parsed.purchases) ? parsed.purchases.map(normalizePurchase) : [],
+        funds: { ...defaultFunds(), ...(parsed.funds || {}) }
+      };
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return defaultState();
+        const parsed = JSON.parse(raw);
+        return normalizeState(parsed);
+      } catch (error) {
+        return defaultState();
+      }
+    }
+
+    function saveLocalState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function saveState() {
+      saveLocalState();
+      scheduleCloudSave();
+    }
+
+    function showNotice(message, type = 'success') {
+      els.notice.textContent = message;
+      els.notice.className = 'notice show ' + type;
+      window.clearTimeout(showNotice.timer);
+      showNotice.timer = window.setTimeout(() => {
+        els.notice.className = 'notice';
+      }, 6000);
+    }
+
+    function setCloudStatus(label, level = 'local') {
+      els.cloudStatus.textContent = label;
+      els.cloudStatus.className = `cloud-pill ${level}`;
+    }
+
+    async function cloudRequest(method, payload) {
+      const headers = { 'Content-Type': 'application/json' };
+      if (cloud.pin) headers['x-app-pin'] = cloud.pin;
+      const options = { method, headers };
+      if (payload) options.body = JSON.stringify({ payload });
+
+      const response = await fetch('/api/state', options);
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (error) {
+        data = null;
+      }
+      return { response, data };
+    }
+
+    async function loadCloudState(showSuccess = false) {
+      setCloudStatus('Checking cloud', 'syncing');
+      try {
+        const { response, data } = await cloudRequest('GET');
+        if (!data || response.status === 404) {
+          cloud.available = false;
+          cloud.configured = false;
+          setCloudStatus('Local mode', 'local');
+          return;
+        }
+
+        cloud.available = true;
+        cloud.configured = Boolean(data.configured);
+
+        if (response.status === 401) {
+          setCloudStatus('Cloud PIN needed', 'needs-pin');
+          showNotice('Cloud sync is protected. Tap Cloud PIN, enter the app PIN, then sync again.', 'info');
+          return;
+        }
+
+        if (!response.ok) {
+          setCloudStatus(data.configured === false ? 'Connect Supabase' : 'Cloud error', data.configured === false ? 'needs-pin' : 'error');
+          if (showSuccess) showNotice(data.message || 'Cloud sync is not available yet.', 'error');
+          return;
+        }
+
+        state = normalizeState(data.payload || defaultState());
+        saveLocalState();
+        setFundInputsFromState();
+        renderAll();
+        setCloudStatus('Online sync', 'online');
+        if (showSuccess) showNotice('Cloud data loaded from Supabase.', 'success');
+      } catch (error) {
+        cloud.available = false;
+        cloud.configured = false;
+        setCloudStatus('Local mode', 'local');
+        if (showSuccess) showNotice('Cloud sync is unavailable, so the app is using local offline data.', 'info');
+      }
+    }
+
+    function scheduleCloudSave() {
+      if (!cloud.available || !cloud.configured) return;
+      window.clearTimeout(cloud.saveTimer);
+      cloud.saveTimer = window.setTimeout(saveCloudState, 600);
+    }
+
+    async function saveCloudState() {
+      if (!cloud.available || !cloud.configured) return;
+      setCloudStatus('Saving cloud', 'syncing');
+      try {
+        const { response, data } = await cloudRequest('PUT', normalizeState(state));
+        if (response.status === 401) {
+          setCloudStatus('Cloud PIN needed', 'needs-pin');
+          showNotice('Cloud save needs the app PIN. Local data is still saved on this iPhone/browser.', 'info');
+          return;
+        }
+        if (!response.ok) {
+          setCloudStatus('Cloud error', 'error');
+          showNotice((data && data.message) || 'Cloud save failed. Local data is still saved.', 'error');
+          return;
+        }
+        setCloudStatus('Online sync', 'online');
+      } catch (error) {
+        setCloudStatus('Cloud error', 'error');
+        showNotice('Cloud save failed. Local data is still saved.', 'error');
+      }
+    }
+
+    function updateCloudPin() {
+      const nextPin = prompt('Cloud access PIN', cloud.pin);
+      if (nextPin === null) return;
+      cloud.pin = nextPin.trim();
+      if (cloud.pin) {
+        localStorage.setItem(CLOUD_PIN_KEY, cloud.pin);
+      } else {
+        localStorage.removeItem(CLOUD_PIN_KEY);
+      }
+      loadCloudState(true);
+    }
+
+    function lineTotal(line) {
+      return roundMoney(numberValue(line.litres) * numberValue(line.unitPrice));
+    }
+
+    function purchaseTotal(purchase) {
+      return roundMoney(normalizeLines(purchase.lines).reduce((sum, line) => sum + lineTotal(line), 0));
+    }
+
+    function purchasePaid(purchase) {
+      return roundMoney((purchase.payments || []).reduce((sum, payment) => sum + numberValue(payment.amount), 0));
+    }
+
+    function purchaseBalance(purchase) {
+      return roundMoney(purchaseTotal(purchase) - purchasePaid(purchase));
+    }
+
+    function purchaseStatus(purchase) {
+      const paid = purchasePaid(purchase);
+      const balance = purchaseBalance(purchase);
+      if (balance < -0.009) return 'credit';
+      if (balance <= 0.009 && purchaseTotal(purchase) > 0) return 'paid';
+      if (paid > 0.009) return 'partial';
+      return 'open';
+    }
+
+    function roundMoney(value) {
+      return Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
+    }
+
+    function selectedPurchase() {
+      return state.purchases.find(p => p.id === els.paymentPurchaseId.value) || null;
+    }
+
+    function getDraftLines() {
+      return PRODUCTS.map(product => {
+        const litresInput = document.querySelector(`[data-litres="${product}"]`);
+        const priceInput = document.querySelector(`[data-price="${product}"]`);
+        return {
+          product,
+          litres: numberValue(litresInput.value),
+          unitPrice: numberValue(priceInput.value)
+        };
+      });
+    }
+
+    function updateDraftTotal() {
+      const lines = getDraftLines();
+      let total = 0;
+      lines.forEach(line => {
+        const totalEl = document.querySelector(`[data-total="${line.product}"]`);
+        const itemTotal = lineTotal(line);
+        total += itemTotal;
+        totalEl.textContent = money(itemTotal);
+      });
+      els.purchaseDraftTotal.textContent = money(total);
+    }
+
+    function setDefaultDates() {
+      const current = today();
+      els.purchaseDate.value = els.purchaseDate.value || current;
+      els.paymentDate.value = els.paymentDate.value || current;
+    }
+
+    function renderAll() {
+      updateDraftTotal();
+      renderPaymentOptions();
+      renderSummary();
+      renderPurchases();
+    }
+
+    function renderPaymentOptions() {
+      const selected = selectedPurchase();
+      if (!state.purchases.length) {
+        els.paymentPurchaseId.value = '';
+        els.selectedPaymentTarget.textContent = 'No ATL selected yet. Execute a purchase first.';
+        return;
+      }
+
+      if (!selected) {
+        els.paymentPurchaseId.value = '';
+        els.selectedPaymentTarget.textContent = 'No ATL selected. Tap Update Payment under a registered ATL.';
+        return;
+      }
+
+      const balance = purchaseBalance(selected);
+      els.selectedPaymentTarget.textContent = `Selected ATL ${purchaseAtlNumber(selected)} • ${selected.supplier} • Balance ${money(balance)}`;
+    }
+
+    function calculateTotals() {
+      let totalPurchase = 0;
+      let totalPaid = 0;
+      let outstanding = 0;
+      let credit = 0;
+      let openCount = 0;
+      const productStats = Object.fromEntries(PRODUCTS.map(product => [product, { litres: 0, value: 0 }]));
+
+      state.purchases.forEach(purchase => {
+        const pTotal = purchaseTotal(purchase);
+        const paid = purchasePaid(purchase);
+        const balance = purchaseBalance(purchase);
+        totalPurchase += pTotal;
+        totalPaid += paid;
+        if (balance > 0.009) {
+          outstanding += balance;
+          openCount += 1;
+        }
+        if (balance < -0.009) credit += Math.abs(balance);
+        normalizeLines(purchase.lines).forEach(line => {
+          if (productStats[line.product]) {
+            productStats[line.product].litres += numberValue(line.litres);
+            productStats[line.product].value += lineTotal(line);
+          }
+        });
+      });
+
+      const totalLitres = PRODUCTS.reduce((sum, product) => sum + productStats[product].litres, 0);
+      return { totalPurchase, totalPaid, outstanding, credit, openCount, productStats, totalLitres };
+    }
+
+    function getFundDraft() {
+      return {
+        ugtCash: roundMoney(numberValue(els.ugtCash.value)),
+        bankBalance: roundMoney(numberValue(els.bankBalance.value)),
+        salesForDeposit: roundMoney(numberValue(els.salesForDeposit.value))
+      };
+    }
+
+    function setFundInputsFromState() {
+      const funds = { ...defaultFunds(), ...(state.funds || {}) };
+      els.ugtCash.value = funds.ugtCash ? funds.ugtCash : '';
+      els.bankBalance.value = funds.bankBalance ? funds.bankBalance : '';
+      els.salesForDeposit.value = funds.salesForDeposit ? funds.salesForDeposit : '';
+    }
+
+    function fundHealth(outstanding) {
+      const funds = getFundDraft();
+      const totalAvailable = roundMoney(funds.ugtCash + funds.bankBalance + funds.salesForDeposit);
+      const coverage = roundMoney(totalAvailable - outstanding);
+      const bankAfterPay = roundMoney(funds.bankBalance - outstanding);
+      const bufferTarget = roundMoney(outstanding * 1.10);
+      const bufferCoverage = roundMoney(totalAvailable - bufferTarget);
+      let level = 'neutral';
+      let label = 'SET FUNDS';
+      let detail = 'Enter UGT cash, bank balance, and sales for deposit to check fund health.';
+
+      if (outstanding <= 0.009) {
+        if (totalAvailable > 0.009) {
+          level = 'healthy';
+          label = 'HEALTHY';
+          detail = `No open ATL balance. Available funds are ${money(totalAvailable)}.`;
+        }
+      } else if (totalAvailable + 0.009 < outstanding) {
+        level = 'critical';
+        label = 'CRITICAL';
+        detail = `Funds are short by ${money(Math.abs(coverage))} versus open ATL balances and below the ${money(bufferTarget)} buffer target.`;
+      } else if (totalAvailable + 0.009 < bufferTarget) {
+        level = 'watch';
+        label = 'WATCH';
+        detail = `Funds cover ATL balances, but buffer is below 10%. Extra buffer needed: ${money(Math.abs(bufferCoverage))}.`;
+      } else {
+        level = 'healthy';
+        label = 'HEALTHY';
+        detail = `Funds cover ATL balances plus the 10% buffer. Buffer surplus: ${money(bufferCoverage)}.`;
+      }
+
+      return { ...funds, totalAvailable, coverage, bankAfterPay, bufferTarget, bufferCoverage, level, label, detail };
+    }
+
+    function renderFundHealth(outstanding) {
+      const health = fundHealth(outstanding);
+      els.fundTotalAvailable.textContent = money(health.totalAvailable);
+      els.fundOutstanding.textContent = money(outstanding);
+      els.fundBufferTarget.textContent = money(health.bufferTarget);
+      els.fundCoverage.textContent = money(health.coverage);
+      els.fundBankAfterPay.textContent = money(health.bankAfterPay);
+      els.fundStatusText.textContent = health.label;
+      els.fundStatusDetail.textContent = health.detail;
+      els.fundStatusCard.className = `fund-status-card ${health.level}`;
+      els.summaryFundStatus.textContent = health.label;
+      els.summaryFundNote.textContent = `Available ${money(health.totalAvailable)} • Buffer target ${money(health.bufferTarget)}`;
+      els.summaryFundCard.className = `summary-card fund-card ${health.level}`;
+    }
+
+    function renderSummary() {
+      const totals = calculateTotals();
+
+      els.summaryOutstanding.textContent = money(totals.outstanding);
+      els.summaryOpen.textContent = `${totals.openCount} open purchase${totals.openCount === 1 ? '' : 's'}`;
+      els.summaryPurchase.textContent = money(totals.totalPurchase);
+      els.summaryPurchaseCount.textContent = `${state.purchases.length} purchase record${state.purchases.length === 1 ? '' : 's'}`;
+      els.summaryPayment.textContent = money(totals.totalPaid);
+      els.summaryCredit.textContent = `${money(totals.credit)} supplier credit`;
+      els.summaryLitres.textContent = litres(totals.totalLitres);
+      els.summaryProductBreakdown.textContent = PRODUCTS.map(product => {
+        const stat = totals.productStats[product];
+        const avgPrice = stat.litres ? stat.value / stat.litres : 0;
+        return `${product} ${litres(stat.litres)} @ ${money(avgPrice)}/L`;
+      }).join(' • ');
+
+      renderFundHealth(totals.outstanding);
+
+      const selected = selectedPurchase();
+      if (selected) {
+        els.summarySelectedBalance.textContent = money(purchaseBalance(selected));
+        els.summarySelectedLabel.textContent = `ATL ${purchaseAtlNumber(selected)} • ${selected.supplier}`;
+        if (!els.paymentAmount.value) {
+          const bal = Math.max(0, purchaseBalance(selected));
+          els.paymentAmount.placeholder = bal ? bal.toFixed(2) : '0.00';
+        }
+      } else {
+        els.summarySelectedBalance.textContent = money(0);
+        els.summarySelectedLabel.textContent = 'No purchase selected';
+      }
+    }
+
+    function renderPurchases() {
+      const search = els.searchBox.value.trim().toLowerCase();
+      const statusFilter = els.statusFilter.value;
+      let purchases = [...state.purchases].sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+
+      purchases = purchases.filter(purchase => {
+        const status = purchaseStatus(purchase);
+        const haystack = [
+          purchase.supplier,
+          purchaseAtlNumber(purchase),
+          purchase.purchaseDate,
+          purchase.notes,
+          status,
+          ...normalizeLines(purchase.lines).map(line => `${line.product} ${line.litres} ${line.unitPrice}`),
+          ...(purchase.payments || []).map(payment => `${payment.date} ${payment.amount} ${payment.method} ${payment.reference} ${payment.attachmentName}`)
+        ].join(' ').toLowerCase();
+        return (statusFilter === 'all' || status === statusFilter) && (!search || haystack.includes(search));
+      });
+
+      if (!purchases.length) {
+        els.purchaseList.innerHTML = '<div class="empty">No ATL records found. Execute a purchase or tap Load Sample.</div>';
+        return;
+      }
+
+      els.purchaseList.innerHTML = purchases.map(purchase => {
+        const total = purchaseTotal(purchase);
+        const paid = purchasePaid(purchase);
+        const balance = purchaseBalance(purchase);
+        const status = purchaseStatus(purchase);
+        const lines = normalizeLines(purchase.lines);
+        const payments = [...(purchase.payments || [])].sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+
+        return `
+          <article class="purchase-card">
+            <div class="purchase-top">
+              <div>
+                <h3 class="purchase-title">ATL ${escapeHtml(purchaseAtlNumber(purchase))} — ${escapeHtml(purchase.supplier)}</h3>
+                <p class="purchase-meta">Purchase date: ${escapeHtml(purchase.purchaseDate || '-')} • ATL ID: ${escapeHtml(purchase.id)}</p>
+              </div>
+              <span class="status ${status}">${status.toUpperCase()}</span>
+            </div>
+            <div class="purchase-body">
+              <div class="amount-row">
+                <div class="amount-box"><span>Total Purchase</span><strong>${money(total)}</strong></div>
+                <div class="amount-box"><span>Total Paid</span><strong>${money(paid)}</strong></div>
+                <div class="amount-box"><span>${balance < 0 ? 'Supplier Credit' : 'Balance'}</span><strong>${money(Math.abs(balance))}</strong></div>
+              </div>
+
+              <table class="mini-table" aria-label="Product lines">
+                <thead><tr><th>Product</th><th>Liter Capacity</th><th>Price / Liter</th><th>Product Total</th></tr></thead>
+                <tbody>
+                  ${lines.map(line => `
+                    <tr>
+                      <td>${escapeHtml(line.product)}</td>
+                      <td>${litres(line.litres)}</td>
+                      <td>${money(line.unitPrice)}/L</td>
+                      <td>${money(lineTotal(line))}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+
+              <strong>Payment timeline</strong>
+              <div class="timeline">
+                ${payments.length ? payments.map(payment => renderPaymentItem(payment)).join('') : '<div class="empty">No payment yet. Tap Update Payment on this ATL anytime.</div>'}
+              </div>
+
+              ${purchase.notes ? `<p class="hint"><strong>Notes:</strong> ${escapeHtml(purchase.notes)}</p>` : ''}
+              <div class="action-row">
+                <button class="btn small secondary" type="button" data-select-purchase="${escapeHtml(purchase.id)}">Update Payment</button>
+                <button class="btn small danger" type="button" data-delete-purchase="${escapeHtml(purchase.id)}">Delete</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderPaymentItem(payment) {
+      const attachment = payment.attachmentData
+        ? `<a href="${escapeHtml(payment.attachmentData)}" download="${escapeHtml(payment.attachmentName || 'deposit-slip')}">Download/View slip</a>`
+        : 'No deposit slip attached';
+      return `
+        <div class="payment-item">
+          <strong>${money(payment.amount)} on ${escapeHtml(payment.date || '-')}</strong>
+          <span>${escapeHtml(payment.method || 'Payment')} • Ref: ${escapeHtml(payment.reference || '-')} • ${attachment}</span>
+        </div>
+      `;
+    }
+
+    function resetPurchaseForm() {
+      els.purchaseForm.reset();
+      PRODUCTS.forEach(product => {
+        document.querySelector(`[data-litres="${product}"]`).value = '';
+        document.querySelector(`[data-price="${product}"]`).value = '';
+      });
+      setDefaultDates();
+      updateDraftTotal();
+    }
+
+    function resetPaymentForm(keepPurchase = true) {
+      const purchaseId = keepPurchase ? els.paymentPurchaseId.value : '';
+      els.paymentForm.reset();
+      els.paymentDate.value = today();
+      if (keepPurchase) els.paymentPurchaseId.value = purchaseId;
+      selectedAttachment = null;
+      els.filePreview.textContent = 'No file selected. Attach PDF, image, or text deposit slip.';
+    }
+
+    async function readAttachment(file) {
+      if (!file) return null;
+      const maxBytes = 3.5 * 1024 * 1024;
+      if (file.size > maxBytes) {
+        showNotice('Deposit slip is too large for this single-file browser test. Please use a file below 3.5 MB.', 'error');
+        els.depositSlip.value = '';
+        return null;
+      }
+      const data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      return {
+        attachmentName: file.name,
+        attachmentType: file.type || 'application/octet-stream',
+        attachmentSize: file.size,
+        attachmentData: data
+      };
+    }
+
+    function executePurchase(event) {
+      event.preventDefault();
+      const lines = getDraftLines().map(line => ({
+        product: line.product,
+        litres: roundMoney(line.litres),
+        unitPrice: Math.round(line.unitPrice * 10000) / 10000
+      }));
+      const total = lines.reduce((sum, line) => sum + lineTotal(line), 0);
+      const atlNumber = els.atlNumber.value.trim();
+      const duplicateAtl = state.purchases.find(purchase => normalizeAtlKey(purchaseAtlNumber(purchase)) === normalizeAtlKey(atlNumber));
+      const incompleteLine = lines.find(line => line.litres <= 0 || line.unitPrice <= 0);
+
+      if (!els.supplier.value.trim()) {
+        showNotice('Please enter supplier name.', 'error');
+        els.supplier.focus();
+        return;
+      }
+      if (!atlNumber) {
+        showNotice('Please enter ATL Number.', 'error');
+        els.atlNumber.focus();
+        return;
+      }
+      if (duplicateAtl) {
+        showNotice(`ATL ${atlNumber} is already registered. Use a unique ATL Number.`, 'error');
+        els.atlNumber.focus();
+        return;
+      }
+      if (!els.purchaseDate.value) {
+        showNotice('Please select the purchase date for this ATL.', 'error');
+        els.purchaseDate.focus();
+        return;
+      }
+      if (incompleteLine || total <= 0) {
+        showNotice('Please enter liter capacity and price per liter for Premium, Regular, and Diesel.', 'error');
+        const field = incompleteLine && document.querySelector(`[data-${incompleteLine.litres <= 0 ? 'litres' : 'price'}="${incompleteLine.product}"]`);
+        if (field) field.focus();
+        return;
+      }
+
+      const purchase = {
+        id: makeId('PUR'),
+        supplier: els.supplier.value.trim(),
+        atlNumber,
+        purchaseDate: els.purchaseDate.value,
+        notes: els.purchaseNotes.value.trim(),
+        lines,
+        payments: [],
+        createdAt: new Date().toISOString()
+      };
+
+      state.purchases.push(purchase);
+      saveState();
+      resetPurchaseForm();
+      els.paymentPurchaseId.value = purchase.id;
+      els.paymentAmount.value = '';
+      els.paymentAmount.placeholder = purchaseBalance(purchase).toFixed(2);
+      renderAll();
+      openPaymentPanel();
+      showNotice(`ATL ${purchaseAtlNumber(purchase)} registered. Payment update is open for this ATL.`, 'success');
+    }
+
+    function openPaymentPanel() {
+      els.paymentPanel.classList.add('is-open');
+      els.paymentPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.setTimeout(() => els.paymentPanel.classList.remove('is-open'), 1800);
+    }
+
+    async function updatePayment(event) {
+      event.preventDefault();
+      const purchase = selectedPurchase();
+      if (!purchase) {
+        showNotice('Please execute an ATL or tap Update Payment on a registered ATL first.', 'error');
+        return;
+      }
+
+      const amount = roundMoney(numberValue(els.paymentAmount.value));
+      if (amount <= 0) {
+        showNotice('Please enter a payment amount greater than zero.', 'error');
+        els.paymentAmount.focus();
+        return;
+      }
+      if (!els.paymentDate.value) {
+        showNotice('Please select the payment date for this payment update.', 'error');
+        els.paymentDate.focus();
+        return;
+      }
+
+      const balance = purchaseBalance(purchase);
+      if (balance > 0.009 && amount > balance + 0.009) {
+        const proceed = confirm(`Payment is ${money(amount - balance)} above the current ATL balance. Continue and record supplier credit?`);
+        if (!proceed) return;
+      }
+
+      const file = els.depositSlip.files && els.depositSlip.files[0] ? els.depositSlip.files[0] : null;
+      const attachment = selectedAttachment || await readAttachment(file);
+      if (file && !attachment) return;
+
+      const payment = {
+        id: makeId('PAY'),
+        date: els.paymentDate.value,
+        amount,
+        method: els.paymentMethod.value,
+        reference: els.paymentReference.value.trim(),
+        attachmentName: attachment ? attachment.attachmentName : '',
+        attachmentType: attachment ? attachment.attachmentType : '',
+        attachmentSize: attachment ? attachment.attachmentSize : 0,
+        attachmentData: attachment ? attachment.attachmentData : '',
+        createdAt: new Date().toISOString()
+      };
+
+      purchase.payments = purchase.payments || [];
+      purchase.payments.push(payment);
+
+      try {
+        saveState();
+      } catch (error) {
+        purchase.payments.pop();
+        showNotice('Could not save payment. The attached slip may be too large for browser local storage.', 'error');
+        return;
+      }
+
+      resetPaymentForm(true);
+      els.paymentPurchaseId.value = purchase.id;
+      renderAll();
+      showNotice(`Payment ${money(amount)} added to ATL ${purchaseAtlNumber(purchase)}.`, 'success');
+    }
+
+    function loadSample() {
+      const purchase = {
+        id: makeId('PUR'),
+        supplier: 'Mabuhay Fuel Depot',
+        atlNumber: uniqueAtlNumber('ATL-1050'),
+        purchaseDate: today(),
+        notes: 'Sample ATL purchase with Premium, Regular, and Diesel liter capacity and price per liter. Payment can be staggered later.',
+        lines: [
+          { product: 'Premium', litres: 4000, unitPrice: 67.50 },
+          { product: 'Regular', litres: 6000, unitPrice: 64.20 },
+          { product: 'Diesel', litres: 8000, unitPrice: 59.80 }
+        ],
+        payments: [
+          {
+            id: makeId('PAY'),
+            date: today(),
+            amount: 500000,
+            method: 'Bank Transfer',
+            reference: 'BDO-DEP-0001',
+            attachmentName: 'sample-bank-deposit-slip.txt',
+            attachmentType: 'text/plain',
+            attachmentSize: 99,
+            attachmentData: 'data:text/plain;charset=utf-8,' + encodeURIComponent('Sample Philippine Bank Deposit Slip\nSupplier: Mabuhay Fuel Depot\nReference: BDO-DEP-0001\nAmount: ₱500,000.00'),
+            createdAt: new Date().toISOString()
+          }
+        ],
+        createdAt: new Date().toISOString()
+      };
+      state.purchases.push(purchase);
+      state.funds = {
+        ugtCash: 350000,
+        bankBalance: 820000,
+        salesForDeposit: 250000,
+        updatedAt: new Date().toISOString()
+      };
+      setFundInputsFromState();
+      saveState();
+      els.paymentPurchaseId.value = purchase.id;
+      renderAll();
+      openPaymentPanel();
+      showNotice('Sample ATL loaded. You can now add another dated payment and attach a slip.', 'info');
+    }
+
+    function exportJson() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fuel-atl-purchase-payment-export.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function resetApp() {
+      if (!confirm('Reset all purchases and payments for this app?')) return;
+      state = defaultState();
+      selectedAttachment = null;
+      localStorage.removeItem(STORAGE_KEY);
+      saveState();
+      resetPurchaseForm();
+      resetPaymentForm(false);
+      renderAll();
+      showNotice('App data reset.', 'info');
+    }
+
+    function updateFundHealth(event) {
+      event.preventDefault();
+      state.funds = { ...getFundDraft(), updatedAt: new Date().toISOString() };
+      saveState();
+      renderSummary();
+      showNotice('Fund health updated. The system checked UGT cash, bank balance, and sales for deposit against outstanding ATL balances.', 'success');
+    }
+
+    function handleListClick(event) {
+      const selectBtn = event.target.closest('[data-select-purchase]');
+      const deleteBtn = event.target.closest('[data-delete-purchase]');
+
+      if (selectBtn) {
+        const id = selectBtn.getAttribute('data-select-purchase');
+        els.paymentPurchaseId.value = id;
+        renderPaymentOptions();
+        renderSummary();
+        openPaymentPanel();
+        showNotice('ATL selected. Add a payment date, amount, and deposit slip.', 'info');
+      }
+
+      if (deleteBtn) {
+        const id = deleteBtn.getAttribute('data-delete-purchase');
+        const purchase = state.purchases.find(p => p.id === id);
+        if (!purchase) return;
+        if (!confirm(`Delete ATL ${purchaseAtlNumber(purchase)}?`)) return;
+        state.purchases = state.purchases.filter(p => p.id !== id);
+        saveState();
+        renderAll();
+        showNotice('ATL purchase deleted.', 'info');
+      }
+    }
+
+    PRODUCTS.forEach(product => {
+      document.querySelector(`[data-litres="${product}"]`).addEventListener('input', updateDraftTotal);
+      document.querySelector(`[data-price="${product}"]`).addEventListener('input', updateDraftTotal);
+    });
+
+    els.purchaseForm.addEventListener('submit', executePurchase);
+    els.paymentForm.addEventListener('submit', updatePayment);
+    els.fundForm.addEventListener('submit', updateFundHealth);
+    [els.ugtCash, els.bankBalance, els.salesForDeposit].forEach(input => input.addEventListener('input', renderSummary));
+    els.searchBox.addEventListener('input', renderPurchases);
+    els.statusFilter.addEventListener('change', renderPurchases);
+    els.syncBtn.addEventListener('click', () => loadCloudState(true));
+    els.pinBtn.addEventListener('click', updateCloudPin);
+    els.loadSampleBtn.addEventListener('click', loadSample);
+    els.exportBtn.addEventListener('click', exportJson);
+    els.resetBtn.addEventListener('click', resetApp);
+    els.purchaseList.addEventListener('click', handleListClick);
+
+    els.depositSlip.addEventListener('change', async () => {
+      const file = els.depositSlip.files && els.depositSlip.files[0] ? els.depositSlip.files[0] : null;
+      selectedAttachment = null;
+      if (!file) {
+        els.filePreview.textContent = 'No file selected. Attach PDF, image, or text deposit slip.';
+        return;
+      }
+      els.filePreview.textContent = `${file.name} • ${(file.size / 1024).toFixed(1)} KB selected`;
+      selectedAttachment = await readAttachment(file);
+      if (selectedAttachment) {
+        els.filePreview.textContent = `${file.name} • ${(file.size / 1024).toFixed(1)} KB ready to attach`;
+      }
+    });
+
+    setDefaultDates();
+    setFundInputsFromState();
+    renderAll();
+    loadCloudState();
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
