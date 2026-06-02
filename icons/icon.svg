@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Fuel ATL</title>
+  <desc id="desc">Fuel ATL app icon with payment and fuel marks.</desc>
+  <defs>
+    <linearGradient id="bg" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563eb"/>
+      <stop offset="0.54" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="152" y1="88" x2="380" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#dbeafe" stop-opacity="0.72"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="392" cy="108" r="50" fill="#fbbf24" opacity="0.92"/>
+  <path d="M127 364c20-70 51-132 92-185 28-36 61-66 98-90 9-6 21 3 17 14l-61 145h82c11 0 16 13 9 21-51 61-112 111-183 151-10 6-21-5-16-16l45-105h-72c-8 0-14-7-11-15Z" fill="url(#glow)"/>
+  <path d="M108 374h244c18 0 32 14 32 32v12H108v-44Z" fill="#ffffff" opacity="0.92"/>
+  <path d="M120 413h272c13 0 24 11 24 24v12H120v-36Z" fill="#0f172a" opacity="0.74"/>
+  <text x="256" y="279" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="98" font-weight="800" letter-spacing="0" fill="#ffffff">ATL</text>
+</svg>
