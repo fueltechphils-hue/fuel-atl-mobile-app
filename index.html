@@ -1079,9 +1079,15 @@
         <div class="panel-body">
           <form id="paymentForm" class="form-grid" autocomplete="off">
             <input id="paymentPurchaseId" type="hidden" value="" />
+            <div class="field">
+              <label for="paymentPurchaseSelect">ATL to Update</label>
+              <select id="paymentPurchaseSelect">
+                <option value="">No ATL registered yet</option>
+              </select>
+            </div>
             <div class="field full">
               <label>Selected ATL</label>
-              <div class="selected-target" id="selectedPaymentTarget">No ATL selected yet. Execute a purchase or tap Update Payment on a registered ATL.</div>
+              <div class="selected-target" id="selectedPaymentTarget">No ATL selected yet. Execute a purchase or choose an ATL.</div>
             </div>
             <div class="field">
               <label for="paymentDate">Payment Date</label>
@@ -1119,26 +1125,6 @@
       </section>
     </main>
 
-    <section class="panel list-panel">
-      <div class="panel-header">
-        <h2>Registered ATL Purchases & Payment Timeline</h2>
-        <p>Each ATL shows liter capacity, price per liter, product total, paid amount, remaining balance, and attached payment slips.</p>
-      </div>
-      <div class="panel-body">
-        <div class="filters">
-          <input id="searchBox" placeholder="Search supplier, ATL, product, reference..." />
-          <select id="statusFilter" aria-label="Status filter">
-            <option value="all">All statuses</option>
-            <option value="open">Open</option>
-            <option value="partial">Partial</option>
-            <option value="paid">Paid</option>
-            <option value="credit">Credit</option>
-          </select>
-        </div>
-        <div class="purchase-list" id="purchaseList"></div>
-      </div>
-    </section>
-
     <p class="footer-note">Online-ready mobile app. Currency: Philippine pesos (PHP ₱).</p>
         </div>
       </div>
@@ -1161,6 +1147,7 @@
       paymentPanel: document.getElementById('paymentPanel'),
       paymentForm: document.getElementById('paymentForm'),
       paymentPurchaseId: document.getElementById('paymentPurchaseId'),
+      paymentPurchaseSelect: document.getElementById('paymentPurchaseSelect'),
       selectedPaymentTarget: document.getElementById('selectedPaymentTarget'),
       paymentDate: document.getElementById('paymentDate'),
       paymentAmount: document.getElementById('paymentAmount'),
@@ -1168,9 +1155,6 @@
       paymentReference: document.getElementById('paymentReference'),
       depositSlip: document.getElementById('depositSlip'),
       filePreview: document.getElementById('filePreview'),
-      purchaseList: document.getElementById('purchaseList'),
-      searchBox: document.getElementById('searchBox'),
-      statusFilter: document.getElementById('statusFilter'),
       summaryOutstanding: document.getElementById('summaryOutstanding'),
       summaryOpen: document.getElementById('summaryOpen'),
       summaryPurchase: document.getElementById('summaryPurchase'),
@@ -1245,15 +1229,6 @@
       };
     }
 
-    function uniqueAtlNumber(baseNumber) {
-      const base = String(baseNumber || 'ATL').trim();
-      const used = new Set(state.purchases.map(purchase => normalizeAtlKey(purchaseAtlNumber(purchase))));
-      if (!used.has(normalizeAtlKey(base))) return base;
-      let suffix = 2;
-      while (used.has(normalizeAtlKey(`${base}-${suffix}`))) suffix += 1;
-      return `${base}-${suffix}`;
-    }
-
     function defaultState() {
       return { purchases: [] };
     }
@@ -1309,21 +1284,13 @@
       return roundMoney(purchaseTotal(purchase) - purchasePaid(purchase));
     }
 
-    function purchaseStatus(purchase) {
-      const paid = purchasePaid(purchase);
-      const balance = purchaseBalance(purchase);
-      if (balance < -0.009) return 'credit';
-      if (balance <= 0.009 && purchaseTotal(purchase) > 0) return 'paid';
-      if (paid > 0.009) return 'partial';
-      return 'open';
-    }
-
     function roundMoney(value) {
       return Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
     }
 
     function selectedPurchase() {
-      return state.purchases.find(p => p.id === els.paymentPurchaseId.value) || null;
+      const selectedId = els.paymentPurchaseSelect.value || els.paymentPurchaseId.value;
+      return state.purchases.find(p => p.id === selectedId) || null;
     }
 
     function getDraftLines() {
@@ -1360,25 +1327,39 @@
       updateDraftTotal();
       renderPaymentOptions();
       renderSummary();
-      renderPurchases();
     }
 
     function renderPaymentOptions() {
       const selected = selectedPurchase();
+      const currentId = selected ? selected.id : els.paymentPurchaseId.value;
+      els.paymentPurchaseSelect.innerHTML = state.purchases.length
+        ? '<option value="">Select ATL</option>' + state.purchases.map(purchase => {
+          const balance = purchaseBalance(purchase);
+          return `<option value="${escapeHtml(purchase.id)}">ATL ${escapeHtml(purchaseAtlNumber(purchase))} • ${escapeHtml(purchase.supplier || '-')} • ${money(balance)}</option>`;
+        }).join('')
+        : '<option value="">No ATL registered yet</option>';
+
+      if (currentId && state.purchases.some(purchase => purchase.id === currentId)) {
+        els.paymentPurchaseSelect.value = currentId;
+        els.paymentPurchaseId.value = currentId;
+      } else {
+        els.paymentPurchaseId.value = '';
+      }
+
+      const active = selectedPurchase();
       if (!state.purchases.length) {
         els.paymentPurchaseId.value = '';
         els.selectedPaymentTarget.textContent = 'No ATL selected yet. Execute a purchase first.';
         return;
       }
 
-      if (!selected) {
-        els.paymentPurchaseId.value = '';
-        els.selectedPaymentTarget.textContent = 'No ATL selected. Tap Update Payment under a registered ATL.';
+      if (!active) {
+        els.selectedPaymentTarget.textContent = 'No ATL selected. Choose an ATL before updating payment.';
         return;
       }
 
-      const balance = purchaseBalance(selected);
-      els.selectedPaymentTarget.textContent = `Selected ATL ${purchaseAtlNumber(selected)} • ${selected.supplier} • Balance ${money(balance)}`;
+      const balance = purchaseBalance(active);
+      els.selectedPaymentTarget.textContent = `Selected ATL ${purchaseAtlNumber(active)} • ${active.supplier} • Balance ${money(balance)}`;
     }
 
     function calculateTotals() {
@@ -1435,96 +1416,6 @@
           els.paymentAmount.placeholder = bal ? bal.toFixed(2) : '0.00';
         }
       }
-    }
-
-    function renderPurchases() {
-      const search = els.searchBox.value.trim().toLowerCase();
-      const statusFilter = els.statusFilter.value;
-      let purchases = [...state.purchases].sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-
-      purchases = purchases.filter(purchase => {
-        const status = purchaseStatus(purchase);
-        const haystack = [
-          purchase.supplier,
-          purchaseAtlNumber(purchase),
-          purchase.purchaseDate,
-          purchase.notes,
-          status,
-          ...normalizeLines(purchase.lines).map(line => `${line.product} ${line.litres} ${line.unitPrice}`),
-          ...(purchase.payments || []).map(payment => `${payment.date} ${payment.amount} ${payment.method} ${payment.reference} ${payment.attachmentName}`)
-        ].join(' ').toLowerCase();
-        return (statusFilter === 'all' || status === statusFilter) && (!search || haystack.includes(search));
-      });
-
-      if (!purchases.length) {
-        els.purchaseList.innerHTML = '<div class="empty">No ATL records yet. Execute a purchase to register the first ATL.</div>';
-        return;
-      }
-
-      els.purchaseList.innerHTML = purchases.map(purchase => {
-        const total = purchaseTotal(purchase);
-        const paid = purchasePaid(purchase);
-        const balance = purchaseBalance(purchase);
-        const status = purchaseStatus(purchase);
-        const lines = normalizeLines(purchase.lines);
-        const payments = [...(purchase.payments || [])].sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
-
-        return `
-          <article class="purchase-card">
-            <div class="purchase-top">
-              <div>
-                <h3 class="purchase-title">ATL ${escapeHtml(purchaseAtlNumber(purchase))} — ${escapeHtml(purchase.supplier)}</h3>
-                <p class="purchase-meta">Purchase date: ${escapeHtml(purchase.purchaseDate || '-')} • ATL ID: ${escapeHtml(purchase.id)}</p>
-              </div>
-              <span class="status ${status}">${status.toUpperCase()}</span>
-            </div>
-            <div class="purchase-body">
-              <div class="amount-row">
-                <div class="amount-box"><span>Total Purchase</span><strong>${money(total)}</strong></div>
-                <div class="amount-box"><span>Total Paid</span><strong>${money(paid)}</strong></div>
-                <div class="amount-box"><span>${balance < 0 ? 'Supplier Credit' : 'Balance'}</span><strong>${money(Math.abs(balance))}</strong></div>
-              </div>
-
-              <table class="mini-table" aria-label="Product lines">
-                <thead><tr><th>Product</th><th>Liter Capacity</th><th>Price / Liter</th><th>Product Total</th></tr></thead>
-                <tbody>
-                  ${lines.map(line => `
-                    <tr>
-                      <td>${escapeHtml(line.product)}</td>
-                      <td>${litres(line.litres)}</td>
-                      <td>${money(line.unitPrice)}/L</td>
-                      <td>${money(lineTotal(line))}</td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-
-              <strong>Payment timeline</strong>
-              <div class="timeline">
-                ${payments.length ? payments.map(payment => renderPaymentItem(payment)).join('') : '<div class="empty">No payment yet. Tap Update Payment on this ATL anytime.</div>'}
-              </div>
-
-              ${purchase.notes ? `<p class="hint"><strong>Notes:</strong> ${escapeHtml(purchase.notes)}</p>` : ''}
-              <div class="action-row">
-                <button class="btn small secondary" type="button" data-select-purchase="${escapeHtml(purchase.id)}">Update Payment</button>
-                <button class="btn small danger" type="button" data-delete-purchase="${escapeHtml(purchase.id)}">Delete</button>
-              </div>
-            </div>
-          </article>
-        `;
-      }).join('');
-    }
-
-    function renderPaymentItem(payment) {
-      const attachment = payment.attachmentData
-        ? `<a href="${escapeHtml(payment.attachmentData)}" download="${escapeHtml(payment.attachmentName || 'deposit-slip')}">Download/View slip</a>`
-        : 'No deposit slip attached';
-      return `
-        <div class="payment-item">
-          <strong>${money(payment.amount)} on ${escapeHtml(payment.date || '-')}</strong>
-          <span>${escapeHtml(payment.method || 'Payment')} • Ref: ${escapeHtml(payment.reference || '-')} • ${attachment}</span>
-        </div>
-      `;
     }
 
     function resetPurchaseForm() {
@@ -1695,31 +1586,6 @@
       showNotice(`Payment ${money(amount)} added to ATL ${purchaseAtlNumber(purchase)}.`, 'success');
     }
 
-    function handleListClick(event) {
-      const selectBtn = event.target.closest('[data-select-purchase]');
-      const deleteBtn = event.target.closest('[data-delete-purchase]');
-
-      if (selectBtn) {
-        const id = selectBtn.getAttribute('data-select-purchase');
-        els.paymentPurchaseId.value = id;
-        renderPaymentOptions();
-        renderSummary();
-        openPaymentPanel();
-        showNotice('ATL selected. Add a payment date, amount, and deposit slip.', 'info');
-      }
-
-      if (deleteBtn) {
-        const id = deleteBtn.getAttribute('data-delete-purchase');
-        const purchase = state.purchases.find(p => p.id === id);
-        if (!purchase) return;
-        if (!confirm(`Delete ATL ${purchaseAtlNumber(purchase)}?`)) return;
-        state.purchases = state.purchases.filter(p => p.id !== id);
-        saveState();
-        renderAll();
-        showNotice('ATL purchase deleted.', 'info');
-      }
-    }
-
     PRODUCTS.forEach(product => {
       document.querySelector(`[data-litres="${product}"]`).addEventListener('input', updateDraftTotal);
       document.querySelector(`[data-price="${product}"]`).addEventListener('input', updateDraftTotal);
@@ -1727,9 +1593,11 @@
 
     els.purchaseForm.addEventListener('submit', executePurchase);
     els.paymentForm.addEventListener('submit', updatePayment);
-    els.searchBox.addEventListener('input', renderPurchases);
-    els.statusFilter.addEventListener('change', renderPurchases);
-    els.purchaseList.addEventListener('click', handleListClick);
+    els.paymentPurchaseSelect.addEventListener('change', () => {
+      els.paymentPurchaseId.value = els.paymentPurchaseSelect.value;
+      renderPaymentOptions();
+      renderSummary();
+    });
 
     els.depositSlip.addEventListener('change', async () => {
       const file = els.depositSlip.files && els.depositSlip.files[0] ? els.depositSlip.files[0] : null;
