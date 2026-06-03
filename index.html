@@ -764,6 +764,180 @@
       margin-top: 12px;
     }
 
+    .report-panel { margin: 0 0 18px; }
+
+    .report-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .report-controls .btn {
+      min-height: 45px;
+    }
+
+    .report-output { margin-top: 16px; }
+
+    .a4-report {
+      width: min(100%, 860px);
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      padding: 18px;
+      box-shadow: 0 16px 34px rgba(15, 23, 42, 0.07);
+    }
+
+    .a4-report-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #0f172a;
+    }
+
+    .a4-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .report-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: #ffffff url("/api/icon?size=180") center / cover no-repeat;
+      box-shadow: 0 10px 20px rgba(239, 68, 68, 0.18);
+      flex: 0 0 auto;
+    }
+
+    .a4-report h3 {
+      margin: 0;
+      font-size: 1.28rem;
+      letter-spacing: -0.04em;
+    }
+
+    .a4-report p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 750;
+      line-height: 1.4;
+    }
+
+    .period-badge {
+      align-self: flex-start;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #1e3a8a;
+      background: #eff6ff;
+      font-size: 0.8rem;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .a4-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .a4-kpi {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 11px;
+      background: #f8fafc;
+    }
+
+    .a4-kpi span,
+    .report-section-title {
+      display: block;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 950;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .a4-kpi strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 1.1rem;
+      letter-spacing: -0.035em;
+    }
+
+    .a4-report-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .report-section {
+      min-width: 0;
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.82rem;
+    }
+
+    .report-table th,
+    .report-table td {
+      padding: 8px 7px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .report-table th {
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 0.68rem;
+      font-weight: 950;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .report-table td:last-child,
+    .report-table th:last-child {
+      text-align: right;
+    }
+
+    .report-table .money-col {
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .transaction-type {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.68rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .transaction-type.purchase { color: #9a3412; background: #ffedd5; }
+    .transaction-type.payment { color: #14532d; background: #dcfce7; }
+
+    .a4-footer-note {
+      margin-top: 14px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
 
 
     .selected-target {
@@ -1070,6 +1244,9 @@
       .purchase-top { flex-direction: column; }
       .status { align-self: flex-start; }
       .mini-table { display: block; overflow-x: auto; white-space: nowrap; }
+      .report-controls,
+      .a4-kpis,
+      .a4-report-grid { grid-template-columns: 1fr; }
       .iphone-screen .app { padding: 12px; }
       .iphone-screen .topbar { margin: -12px -12px 14px; padding: calc(14px + env(safe-area-inset-top)) 12px 12px; }
       .iphone-screen .summary-grid { grid-template-columns: 1fr; gap: 10px; }
@@ -1095,6 +1272,91 @@
       .iphone-screen .mini-table { display: block; overflow-x: auto; white-space: nowrap; }
       .cloud-pill { min-height: 34px; }
     }
+
+    @media print {
+      @page { size: A4; margin: 12mm; }
+
+      body {
+        background: #fff;
+      }
+
+      .topbar,
+      .summary-grid,
+      #notice,
+      .fund-panel,
+      .grid,
+      .list-panel,
+      .footer-note,
+      .report-controls {
+        display: none !important;
+      }
+
+      .preview-stage,
+      .iphone-shell,
+      .iphone-screen,
+      .iphone-screen .app,
+      .app {
+        display: block !important;
+        width: auto !important;
+        min-height: 0 !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+      }
+
+      .report-panel {
+        margin: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+      }
+
+      .report-panel .panel-header {
+        display: block !important;
+        padding: 0 0 7mm !important;
+        border: 0 !important;
+        background: #fff !important;
+      }
+
+      .report-panel .panel-header h2 {
+        font-size: 16pt !important;
+      }
+
+      .report-panel .panel-header p {
+        display: none !important;
+      }
+
+      .report-panel .panel-body,
+      .report-output {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .a4-report {
+        width: 100% !important;
+        max-width: none !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+
+      .a4-report h3 { font-size: 15pt !important; }
+      .a4-report p,
+      .a4-footer-note { font-size: 8.5pt !important; }
+      .report-table { font-size: 8.5pt !important; }
+      .report-table th,
+      .report-table td { padding: 5pt 4pt !important; }
+    }
   </style>
 </head>
 <body>
@@ -1117,6 +1379,7 @@
           <button class="btn secondary" type="button" id="syncBtn">Sync Cloud</button>
           <button class="btn secondary" type="button" id="pinBtn">Cloud PIN</button>
           <button class="btn secondary" type="button" id="loadSampleBtn">Load Sample</button>
+          <button class="btn secondary" type="button" id="reportJumpBtn">A4 Report</button>
           <button class="btn dark" type="button" id="exportBtn">Export JSON</button>
           <button class="btn danger" type="button" id="resetBtn">Reset</button>
         </div>
@@ -1193,6 +1456,30 @@
             <strong id="fundStatusText">SET FUNDS</strong>
             <p id="fundStatusDetail">Enter fund values to check if funds are healthy.</p>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel report-panel" id="transactionReportPanel">
+      <div class="panel-header">
+        <h2>Date Coverage A4 Transaction Report</h2>
+        <p>Select a coverage period, generate total transactions inside that date range, then print the A4 report.</p>
+      </div>
+      <div class="panel-body">
+        <form id="reportForm" class="report-controls" autocomplete="off">
+          <div class="field">
+            <label for="reportStartDate">Coverage From</label>
+            <input id="reportStartDate" type="date" required />
+          </div>
+          <div class="field">
+            <label for="reportEndDate">Coverage To</label>
+            <input id="reportEndDate" type="date" required />
+          </div>
+          <button class="btn success" type="submit">Generate A4 Report</button>
+          <button class="btn dark" type="button" id="printReportBtn" disabled>Print A4</button>
+        </form>
+        <div class="report-output" id="reportOutput">
+          <div class="empty">Select date coverage, then tap Generate A4 Report.</div>
         </div>
       </div>
     </section>
@@ -1399,8 +1686,15 @@
       syncBtn: document.getElementById('syncBtn'),
       pinBtn: document.getElementById('pinBtn'),
       loadSampleBtn: document.getElementById('loadSampleBtn'),
+      reportJumpBtn: document.getElementById('reportJumpBtn'),
       exportBtn: document.getElementById('exportBtn'),
       resetBtn: document.getElementById('resetBtn'),
+      transactionReportPanel: document.getElementById('transactionReportPanel'),
+      reportForm: document.getElementById('reportForm'),
+      reportStartDate: document.getElementById('reportStartDate'),
+      reportEndDate: document.getElementById('reportEndDate'),
+      reportOutput: document.getElementById('reportOutput'),
+      printReportBtn: document.getElementById('printReportBtn'),
       summaryOutstanding: document.getElementById('summaryOutstanding'),
       summaryOpen: document.getElementById('summaryOpen'),
       summaryFundCard: document.getElementById('summaryFundCard'),
@@ -1418,6 +1712,7 @@
 
     let state = loadState();
     let selectedAttachment = null;
+    let activeReportRange = null;
     const cloud = {
       available: false,
       configured: false,
@@ -1433,6 +1728,35 @@
       const date = new Date(dateString + 'T00:00:00');
       date.setDate(date.getDate() + days);
       return date.toISOString().slice(0, 10);
+    }
+
+    function displayDate(dateString) {
+      if (!dateString) return '-';
+      const date = new Date(dateString + 'T00:00:00');
+      if (Number.isNaN(date.getTime())) return dateString;
+      return date.toLocaleDateString('en-PH', { month: 'short', day: '2-digit', year: 'numeric' });
+    }
+
+    function isDateWithinCoverage(dateString, startDate, endDate) {
+      if (!dateString || !startDate || !endDate) return false;
+      return dateString >= startDate && dateString <= endDate;
+    }
+
+    function transactionDateValues() {
+      const dates = [];
+      state.purchases.forEach(purchase => {
+        if (purchase.purchaseDate) dates.push(purchase.purchaseDate);
+        (purchase.payments || []).forEach(payment => {
+          if (payment.date) dates.push(payment.date);
+        });
+      });
+      return dates.sort();
+    }
+
+    function setDefaultReportDates() {
+      const dates = transactionDateValues();
+      els.reportStartDate.value = els.reportStartDate.value || dates[0] || today();
+      els.reportEndDate.value = els.reportEndDate.value || dates[dates.length - 1] || today();
     }
 
     function makeId(prefix) {
@@ -1708,6 +2032,7 @@
       const current = today();
       els.purchaseDate.value = els.purchaseDate.value || current;
       els.paymentDate.value = els.paymentDate.value || current;
+      setDefaultReportDates();
     }
 
     function renderAll() {
@@ -1715,6 +2040,7 @@
       renderPaymentOptions();
       renderSummary();
       renderPurchases();
+      if (activeReportRange) renderCoverageReport(null, false);
     }
 
     function renderPaymentOptions() {
@@ -1950,6 +2276,223 @@
           <span>${escapeHtml(payment.method || 'Payment')} • Ref: ${escapeHtml(payment.reference || '-')} • ${attachment}</span>
         </div>
       `;
+    }
+
+    function lineSummary(lines) {
+      return normalizeLines(lines)
+        .filter(line => numberValue(line.litres) > 0 || numberValue(line.unitPrice) > 0)
+        .map(line => `${line.product}: ${litres(line.litres)} @ ${money(line.unitPrice)}/L`)
+        .join('; ') || 'No product lines';
+    }
+
+    function calculateCoverageReport(startDate, endDate) {
+      const productStats = Object.fromEntries(PRODUCTS.map(product => [product, { litres: 0, value: 0 }]));
+      const transactions = [];
+      const purchaseIds = new Set();
+      const paymentPurchaseIds = new Set();
+      let purchaseTotalAmount = 0;
+      let paymentTotalAmount = 0;
+      let purchaseCount = 0;
+      let paymentCount = 0;
+
+      state.purchases.forEach(purchase => {
+        const atlNumber = purchaseAtlNumber(purchase);
+        const supplier = purchase.supplier || '-';
+
+        if (isDateWithinCoverage(purchase.purchaseDate, startDate, endDate)) {
+          const total = purchaseTotal(purchase);
+          const lines = normalizeLines(purchase.lines);
+          purchaseTotalAmount += total;
+          purchaseCount += 1;
+          purchaseIds.add(purchase.id);
+          lines.forEach(line => {
+            if (productStats[line.product]) {
+              productStats[line.product].litres += numberValue(line.litres);
+              productStats[line.product].value += lineTotal(line);
+            }
+          });
+          transactions.push({
+            date: purchase.purchaseDate,
+            type: 'purchase',
+            atlNumber,
+            supplier,
+            detail: lineSummary(lines),
+            purchaseAmount: total,
+            paymentAmount: 0
+          });
+        }
+
+        (purchase.payments || []).forEach(payment => {
+          if (!isDateWithinCoverage(payment.date, startDate, endDate)) return;
+          const amount = roundMoney(numberValue(payment.amount));
+          paymentTotalAmount += amount;
+          paymentCount += 1;
+          paymentPurchaseIds.add(purchase.id);
+          transactions.push({
+            date: payment.date,
+            type: 'payment',
+            atlNumber,
+            supplier,
+            detail: `${payment.method || 'Payment'} • Ref: ${payment.reference || '-'}`,
+            purchaseAmount: 0,
+            paymentAmount: amount
+          });
+        });
+      });
+
+      transactions.sort((a, b) => {
+        const dateCompare = String(a.date || '').localeCompare(String(b.date || ''));
+        if (dateCompare) return dateCompare;
+        const typeOrder = { purchase: 0, payment: 1 };
+        return typeOrder[a.type] - typeOrder[b.type];
+      });
+
+      const totalProductLitres = PRODUCTS.reduce((sum, product) => sum + productStats[product].litres, 0);
+      const grossTransactionValue = roundMoney(purchaseTotalAmount + paymentTotalAmount);
+      const netPayableMovement = roundMoney(purchaseTotalAmount - paymentTotalAmount);
+
+      return {
+        startDate,
+        endDate,
+        productStats,
+        totalProductLitres,
+        transactions,
+        purchaseTotalAmount: roundMoney(purchaseTotalAmount),
+        paymentTotalAmount: roundMoney(paymentTotalAmount),
+        grossTransactionValue,
+        netPayableMovement,
+        purchaseCount,
+        paymentCount,
+        transactionCount: purchaseCount + paymentCount,
+        purchaseAtlCount: purchaseIds.size,
+        paymentAtlCount: paymentPurchaseIds.size
+      };
+    }
+
+    function renderCoverageReport(event, shouldScroll = true) {
+      if (event) event.preventDefault();
+      const startDate = els.reportStartDate.value;
+      const endDate = els.reportEndDate.value;
+
+      if (!startDate || !endDate) {
+        showNotice('Please select both coverage dates for the A4 report.', 'error');
+        return;
+      }
+
+      if (startDate > endDate) {
+        showNotice('Coverage From must be on or before Coverage To.', 'error');
+        els.reportStartDate.focus();
+        return;
+      }
+
+      activeReportRange = { startDate, endDate };
+      const report = calculateCoverageReport(startDate, endDate);
+      const productRows = PRODUCTS.map(product => {
+        const stat = report.productStats[product];
+        const avgPrice = stat.litres ? stat.value / stat.litres : 0;
+        return `
+          <tr>
+            <td>${escapeHtml(product)}</td>
+            <td>${litres(stat.litres)}</td>
+            <td>${money(avgPrice)}/L</td>
+            <td class="money-col">${money(stat.value)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const transactionRows = report.transactions.length
+        ? report.transactions.map(transaction => `
+          <tr>
+            <td>${displayDate(transaction.date)}</td>
+            <td><span class="transaction-type ${transaction.type}">${transaction.type}</span></td>
+            <td>
+              <strong>ATL ${escapeHtml(transaction.atlNumber)}</strong><br />
+              ${escapeHtml(transaction.supplier)}
+            </td>
+            <td>${escapeHtml(transaction.detail)}</td>
+            <td class="money-col">${transaction.purchaseAmount ? money(transaction.purchaseAmount) : '-'}</td>
+            <td class="money-col">${transaction.paymentAmount ? money(transaction.paymentAmount) : '-'}</td>
+          </tr>
+        `).join('')
+        : '<tr><td colspan="6">No purchase or payment transactions found inside this coverage period.</td></tr>';
+
+      els.reportOutput.innerHTML = `
+        <article class="a4-report" aria-label="A4 transaction report">
+          <header class="a4-report-head">
+            <div class="a4-title-row">
+              <div class="report-logo" aria-hidden="true"></div>
+              <div>
+                <h3>Fuel ATL Transaction Report</h3>
+                <p>Generated ${displayDate(today())}. Totals include purchase transactions by purchase date and payment transactions by payment date.</p>
+              </div>
+            </div>
+            <div class="period-badge">${displayDate(report.startDate)} to ${displayDate(report.endDate)}</div>
+          </header>
+
+          <section class="a4-kpis" aria-label="Covered period totals">
+            <div class="a4-kpi"><span>Gross Transaction Value</span><strong>${money(report.grossTransactionValue)}</strong></div>
+            <div class="a4-kpi"><span>Purchase Total</span><strong>${money(report.purchaseTotalAmount)}</strong></div>
+            <div class="a4-kpi"><span>Payment Total</span><strong>${money(report.paymentTotalAmount)}</strong></div>
+            <div class="a4-kpi"><span>Net Payable Movement</span><strong>${money(report.netPayableMovement)}</strong></div>
+            <div class="a4-kpi"><span>Transactions</span><strong>${report.transactionCount}</strong></div>
+            <div class="a4-kpi"><span>Purchase ATLs</span><strong>${report.purchaseAtlCount}</strong></div>
+            <div class="a4-kpi"><span>Payment ATLs</span><strong>${report.paymentAtlCount}</strong></div>
+            <div class="a4-kpi"><span>Product Capacity</span><strong>${litres(report.totalProductLitres)}</strong></div>
+          </section>
+
+          <div class="a4-report-grid">
+            <section class="report-section">
+              <span class="report-section-title">Product Purchases In Coverage</span>
+              <table class="report-table" aria-label="Product totals by date coverage">
+                <thead><tr><th>Product</th><th>Liters</th><th>Avg Price</th><th>Total</th></tr></thead>
+                <tbody>${productRows}</tbody>
+              </table>
+            </section>
+
+            <section class="report-section">
+              <span class="report-section-title">Period Summary</span>
+              <table class="report-table" aria-label="Covered period summary">
+                <tbody>
+                  <tr><th>Coverage From</th><td>${displayDate(report.startDate)}</td></tr>
+                  <tr><th>Coverage To</th><td>${displayDate(report.endDate)}</td></tr>
+                  <tr><th>Purchase Entries</th><td>${report.purchaseCount}</td></tr>
+                  <tr><th>Payment Entries</th><td>${report.paymentCount}</td></tr>
+                  <tr><th>Total Transactions</th><td>${report.transactionCount}</td></tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+
+          <section class="report-section">
+            <span class="report-section-title">Transaction List</span>
+            <table class="report-table" aria-label="Transactions inside selected date coverage">
+              <thead><tr><th>Date</th><th>Type</th><th>ATL / Supplier</th><th>Details</th><th>Purchase</th><th>Payment</th></tr></thead>
+              <tbody>${transactionRows}</tbody>
+            </table>
+          </section>
+
+          <p class="a4-footer-note">Net Payable Movement = purchase total minus payment total for the selected date coverage. Current ATL balances may differ when payments or purchases fall outside this report period.</p>
+        </article>
+      `;
+
+      els.printReportBtn.disabled = false;
+      if (shouldScroll) {
+        els.reportOutput.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showNotice(`A4 report generated for ${displayDate(startDate)} to ${displayDate(endDate)}.`, 'success');
+      }
+    }
+
+    function jumpToReportPanel() {
+      els.transactionReportPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.setTimeout(() => els.reportStartDate.focus(), 350);
+    }
+
+    function printCoverageReport() {
+      if (!activeReportRange) {
+        renderCoverageReport(null, false);
+      }
+      if (!activeReportRange) return;
+      window.setTimeout(() => window.print(), 100);
     }
 
     function resetPurchaseForm() {
@@ -2234,6 +2777,9 @@
     els.syncBtn.addEventListener('click', () => loadCloudState(true));
     els.pinBtn.addEventListener('click', updateCloudPin);
     els.loadSampleBtn.addEventListener('click', loadSample);
+    els.reportJumpBtn.addEventListener('click', jumpToReportPanel);
+    els.reportForm.addEventListener('submit', renderCoverageReport);
+    els.printReportBtn.addEventListener('click', printCoverageReport);
     els.exportBtn.addEventListener('click', exportJson);
     els.resetBtn.addEventListener('click', resetApp);
     els.purchaseList.addEventListener('click', handleListClick);
