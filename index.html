@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Fuel ATL Payment — Fund Health Check</title>
+  <title>Fuel ATL Purchase & Payment</title>
   <meta name="theme-color" content="#0f172a" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -168,9 +168,7 @@
 
     .iphone-screen .grid,
     .iphone-screen .form-grid,
-    .iphone-screen .amount-row,
-    .iphone-screen .fund-grid,
-    .iphone-screen .fund-result {
+    .iphone-screen .amount-row {
       grid-template-columns: 1fr;
     }
 
@@ -210,15 +208,6 @@
 
     .iphone-screen .panel-header p {
       font-size: 0.82rem;
-    }
-
-    .iphone-screen .fund-status-card {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-
-    .iphone-screen .fund-status-card p {
-      text-align: left;
     }
 
     .iphone-screen .product-head {
@@ -368,30 +357,9 @@
     .btn.full { width: 100%; }
     .btn.small { padding: 8px 11px; font-size: 0.82rem; }
 
-    .cloud-pill {
-      display: inline-flex;
-      align-items: center;
-      min-height: 38px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 8px 12px;
-      color: #334155;
-      background: #fff;
-      font-size: 0.8rem;
-      font-weight: 950;
-      white-space: nowrap;
-      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
-    }
-
-    .cloud-pill.online { color: #14532d; background: #dcfce7; border-color: #bbf7d0; }
-    .cloud-pill.syncing { color: #1e3a8a; background: #dbeafe; border-color: #bfdbfe; }
-    .cloud-pill.needs-pin { color: #9a3412; background: #ffedd5; border-color: #fed7aa; }
-    .cloud-pill.error { color: #7f1d1d; background: #fee2e2; border-color: #fecaca; }
-    .cloud-pill.local { color: #475569; background: #f8fafc; border-color: #e2e8f0; }
-
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(145px, 1fr));
+      grid-template-columns: repeat(3, minmax(145px, 1fr));
       gap: 12px;
       margin-bottom: 18px;
     }
@@ -406,8 +374,16 @@
     }
 
     .summary-card.outstanding-card {
+      grid-column: 1 / -1;
       border-color: rgba(37, 99, 235, 0.28);
       box-shadow: 0 18px 42px rgba(37, 99, 235, 0.14);
+      min-height: 148px;
+      padding: 22px;
+    }
+
+    .summary-card.outstanding-card .summary-value {
+      color: #1d4ed8;
+      font-size: clamp(2rem, 5vw, 3.35rem);
     }
 
     .summary-label {
@@ -431,6 +407,24 @@
       color: var(--muted);
       font-size: 0.86rem;
       font-weight: 700;
+    }
+
+    .litre-breakdown {
+      display: grid;
+      gap: 4px;
+      line-height: 1.35;
+    }
+
+    .litre-breakdown span {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .litre-breakdown strong {
+      color: var(--ink);
+      font-weight: 950;
+      white-space: nowrap;
     }
 
     .grid {
@@ -726,182 +720,6 @@
       margin-top: 12px;
     }
 
-    .report-panel { margin: 0 0 18px; }
-
-    .report-controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto auto;
-      gap: 12px;
-      align-items: end;
-    }
-
-    .report-controls .btn {
-      min-height: 45px;
-    }
-
-    .report-output { margin-top: 16px; }
-
-    .a4-report {
-      width: min(100%, 860px);
-      margin: 0 auto;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: #fff;
-      padding: 18px;
-      box-shadow: 0 16px 34px rgba(15, 23, 42, 0.07);
-    }
-
-    .a4-report-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      padding-bottom: 14px;
-      border-bottom: 2px solid #0f172a;
-    }
-
-    .a4-title-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .report-logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: #ffffff url("/api/icon?size=180") center / cover no-repeat;
-      box-shadow: 0 10px 20px rgba(239, 68, 68, 0.18);
-      flex: 0 0 auto;
-    }
-
-    .a4-report h3 {
-      margin: 0;
-      font-size: 1.28rem;
-      letter-spacing: 0;
-    }
-
-    .a4-report p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 0.86rem;
-      font-weight: 750;
-      line-height: 1.4;
-    }
-
-    .period-badge {
-      align-self: flex-start;
-      border: 1px solid #bfdbfe;
-      border-radius: 999px;
-      padding: 8px 12px;
-      color: #1e3a8a;
-      background: #eff6ff;
-      font-size: 0.8rem;
-      font-weight: 950;
-      white-space: nowrap;
-    }
-
-    .a4-kpis {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      margin: 16px 0;
-    }
-
-    .a4-kpi {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 11px;
-      background: #f8fafc;
-    }
-
-    .a4-kpi span,
-    .report-section-title {
-      display: block;
-      color: var(--muted);
-      font-size: 0.72rem;
-      font-weight: 950;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .a4-kpi strong {
-      display: block;
-      margin-top: 5px;
-      font-size: 1.1rem;
-      letter-spacing: 0;
-    }
-
-    .a4-report-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .report-section {
-      min-width: 0;
-    }
-
-    .report-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      font-size: 0.82rem;
-    }
-
-    .report-table th,
-    .report-table td {
-      padding: 8px 7px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      vertical-align: top;
-    }
-
-    .report-table th {
-      color: var(--muted);
-      background: #f8fafc;
-      font-size: 0.68rem;
-      font-weight: 950;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    .report-table td:last-child,
-    .report-table th:last-child {
-      text-align: right;
-    }
-
-    .report-table .money-col {
-      font-weight: 950;
-      white-space: nowrap;
-    }
-
-    .transaction-type {
-      display: inline-flex;
-      border-radius: 999px;
-      padding: 4px 8px;
-      font-size: 0.68rem;
-      font-weight: 950;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .transaction-type.purchase { color: #9a3412; background: #ffedd5; }
-    .transaction-type.payment { color: #14532d; background: #dcfce7; }
-
-    .a4-footer-note {
-      margin-top: 14px;
-      border-top: 1px solid var(--line);
-      padding-top: 10px;
-      color: var(--muted);
-      font-size: 0.76rem;
-      font-weight: 800;
-      line-height: 1.4;
-    }
-
-
-
     .selected-target {
       padding: 12px 14px;
       border-radius: 16px;
@@ -911,81 +729,6 @@
       font-weight: 900;
       line-height: 1.4;
     }
-
-
-
-    .fund-panel { margin: 0 0 18px; }
-
-    .fund-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .fund-result {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .fund-box,
-    .fund-status-card {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: #fff;
-      padding: 12px;
-    }
-
-    .fund-box span {
-      display: block;
-      color: var(--muted);
-      font-size: 0.74rem;
-      font-weight: 950;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    .fund-box strong {
-      display: block;
-      margin-top: 5px;
-      font-size: 1.08rem;
-      letter-spacing: 0;
-    }
-
-    .fund-status-card {
-      grid-column: 1 / -1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      color: #334155;
-      background: #f8fafc;
-    }
-
-    .fund-status-card strong {
-      font-size: 1.42rem;
-      letter-spacing: 0;
-    }
-
-    .fund-status-card p {
-      margin: 0;
-      color: inherit;
-      font-size: 0.9rem;
-      font-weight: 800;
-      line-height: 1.45;
-      text-align: right;
-    }
-
-    .fund-status-card.healthy { color: #14532d; background: #dcfce7; border-color: #bbf7d0; }
-    .fund-status-card.watch { color: #9a3412; background: #ffedd5; border-color: #fed7aa; }
-    .fund-status-card.critical { color: #7f1d1d; background: #fee2e2; border-color: #fecaca; }
-    .fund-status-card.neutral { color: #334155; background: #f8fafc; border-color: var(--line); }
-
-    .summary-card.fund-card.healthy .summary-value { color: var(--green); }
-    .summary-card.fund-card.watch .summary-value { color: var(--orange); }
-    .summary-card.fund-card.critical .summary-value { color: var(--red); }
-    .summary-card.fund-card.neutral .summary-value { color: var(--muted); }
 
     .file-preview {
       margin-top: 8px;
@@ -1087,7 +830,7 @@
     }
 
     .iphone-screen .summary-grid {
-      grid-template-columns: repeat(4, minmax(145px, 1fr));
+      grid-template-columns: repeat(3, minmax(145px, 1fr));
       gap: 12px;
       margin-bottom: 18px;
     }
@@ -1105,6 +848,7 @@
     }
 
     .iphone-screen .summary-card.outstanding-card {
+      grid-column: 1 / -1;
       border-color: rgba(37, 99, 235, 0.28);
       box-shadow: 0 18px 42px rgba(37, 99, 235, 0.14);
     }
@@ -1112,21 +856,12 @@
     .iphone-screen .grid { grid-template-columns: 1fr 1fr; }
     .iphone-screen .form-grid { grid-template-columns: 1fr 1fr; }
     .iphone-screen .amount-row { grid-template-columns: repeat(3, 1fr); }
-    .iphone-screen .fund-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .iphone-screen .fund-result { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-
     .iphone-screen .panel { border-radius: var(--radius); }
     .iphone-screen .panel-header,
     .iphone-screen .panel-body { padding: 18px; }
     .iphone-screen .panel-header h2 { font-size: 1.1rem; }
     .iphone-screen .panel-header p { font-size: 0.92rem; }
 
-    .iphone-screen .fund-status-card {
-      align-items: center;
-      flex-direction: row;
-    }
-
-    .iphone-screen .fund-status-card p { text-align: right; }
     .iphone-screen .product-head { display: grid; }
     .iphone-screen .product-row {
       grid-template-columns: 1.1fr 1fr 1fr 1fr;
@@ -1151,10 +886,12 @@
 
     @media (max-width: 900px) {
       .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .summary-card.outstanding-card { grid-column: 1 / -1; }
       .grid { grid-template-columns: 1fr; }
       .brand-row { align-items: flex-start; flex-direction: column; }
       .toolbar { justify-content: flex-start; }
       .iphone-screen .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .iphone-screen .summary-card.outstanding-card { grid-column: 1 / -1; }
       .iphone-screen .grid { grid-template-columns: 1fr; }
       .iphone-screen .brand-row { align-items: flex-start; flex-direction: column; }
       .iphone-screen .toolbar { justify-content: flex-start; width: 100%; }
@@ -1174,15 +911,10 @@
       .product-name { grid-column: 1 / -1; }
       .field-caption { display: block; }
       .line-total { grid-column: 1 / -1; text-align: left; color: #1e3a8a; }
-      .amount-row,
-      .fund-grid,
-      .fund-result { grid-template-columns: 1fr; }
+      .amount-row { grid-template-columns: 1fr; }
       .purchase-top { flex-direction: column; }
       .status { align-self: flex-start; }
       .mini-table { display: block; overflow-x: auto; white-space: nowrap; }
-      .report-controls,
-      .a4-kpis,
-      .a4-report-grid { grid-template-columns: 1fr; }
       .iphone-screen .app { padding: 12px; }
       .iphone-screen .topbar { margin: -12px -12px 14px; padding: calc(14px + env(safe-area-inset-top)) 12px 12px; }
       .iphone-screen .summary-grid { grid-template-columns: 1fr; gap: 10px; }
@@ -1200,98 +932,10 @@
         text-align: left;
         color: #1e3a8a;
       }
-      .iphone-screen .amount-row,
-      .iphone-screen .fund-grid,
-      .iphone-screen .fund-result { grid-template-columns: 1fr; }
+      .iphone-screen .amount-row { grid-template-columns: 1fr; }
       .iphone-screen .purchase-top { flex-direction: column; }
       .iphone-screen .status { align-self: flex-start; }
       .iphone-screen .mini-table { display: block; overflow-x: auto; white-space: nowrap; }
-      .cloud-pill { min-height: 34px; }
-    }
-
-    @media print {
-      @page { size: A4; margin: 12mm; }
-
-      body {
-        background: #fff;
-      }
-
-      .topbar,
-      .summary-grid,
-      #notice,
-      .fund-panel,
-      .grid,
-      .list-panel,
-      .footer-note,
-      .report-controls {
-        display: none !important;
-      }
-
-      .preview-stage,
-      .iphone-shell,
-      .iphone-screen,
-      .iphone-screen .app,
-      .app {
-        display: block !important;
-        width: auto !important;
-        min-height: 0 !important;
-        height: auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: 0 !important;
-        border-radius: 0 !important;
-        background: #fff !important;
-        box-shadow: none !important;
-        overflow: visible !important;
-      }
-
-      .report-panel {
-        margin: 0 !important;
-        border: 0 !important;
-        border-radius: 0 !important;
-        background: #fff !important;
-        box-shadow: none !important;
-        overflow: visible !important;
-      }
-
-      .report-panel .panel-header {
-        display: block !important;
-        padding: 0 0 7mm !important;
-        border: 0 !important;
-        background: #fff !important;
-      }
-
-      .report-panel .panel-header h2 {
-        font-size: 16pt !important;
-      }
-
-      .report-panel .panel-header p {
-        display: none !important;
-      }
-
-      .report-panel .panel-body,
-      .report-output {
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-
-      .a4-report {
-        width: 100% !important;
-        max-width: none !important;
-        min-height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: 0 !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-      }
-
-      .a4-report h3 { font-size: 15pt !important; }
-      .a4-report p,
-      .a4-footer-note { font-size: 8.5pt !important; }
-      .report-table { font-size: 8.5pt !important; }
-      .report-table th,
-      .report-table td { padding: 5pt 4pt !important; }
     }
   </style>
 </head>
@@ -1307,19 +951,8 @@
           <div class="logo" aria-label="LKB logo" role="img"></div>
           <div>
             <h1>Fuel ATL Purchase vs Payment</h1>
-            <p class="subtitle">Mobile ATL purchases, staggered payments, deposit slips, and fund-health checking in Philippine pesos.</p>
+            <p class="subtitle">Mobile ATL purchases, staggered payments, deposit slips, and balances in Philippine pesos.</p>
           </div>
-        </div>
-        <div class="toolbar">
-          <span class="cloud-pill local" id="cloudStatus">Local mode</span>
-          <button class="btn secondary" type="button" id="syncBtn">Sync Cloud</button>
-          <button class="btn secondary" type="button" id="pinBtn">Cloud PIN</button>
-          <button class="btn secondary" type="button" id="loadSampleBtn">Load Sample</button>
-          <button class="btn secondary" type="button" id="reportJumpBtn">A4 Report</button>
-          <button class="btn secondary" type="button" id="importBtn">Upload JSON</button>
-          <button class="btn dark" type="button" id="exportBtn">Export JSON</button>
-          <button class="btn danger" type="button" id="resetBtn">Reset</button>
-          <input id="importFile" type="file" accept=".json,application/json" hidden />
         </div>
       </div>
     </header>
@@ -1335,82 +968,23 @@
         <p class="summary-value" id="summaryPayment">₱0.00</p>
         <p class="summary-note" id="summaryPaymentCount">0 payment records</p>
       </article>
+      <article class="summary-card">
+        <p class="summary-label">Total Liters</p>
+        <p class="summary-value" id="summaryLitres">0 L</p>
+        <p class="summary-note litre-breakdown" id="summaryLitresNote">
+          <span>Premium <strong>0 L</strong></span>
+          <span>Regular <strong>0 L</strong></span>
+          <span>Diesel <strong>0 L</strong></span>
+        </p>
+      </article>
       <article class="summary-card outstanding-card">
         <p class="summary-label">Outstanding Balance</p>
         <p class="summary-value" id="summaryOutstanding">₱0.00</p>
         <p class="summary-note" id="summaryOpen">0 open ATL records</p>
       </article>
-      <article class="summary-card">
-        <p class="summary-label">Total Liters</p>
-        <p class="summary-value" id="summaryLitres">0 L</p>
-        <p class="summary-note" id="summaryLitresNote">0 products registered</p>
-      </article>
     </section>
 
     <div id="notice" class="notice"></div>
-
-    <section class="panel fund-panel" id="fundPanel">
-      <div class="panel-header">
-        <h2>Fund Health Check</h2>
-        <p>Check whether total UGT value converted to cash, bank balance, and sales for deposit are enough to cover all open ATL balances.</p>
-      </div>
-      <div class="panel-body">
-        <form id="fundForm" class="form-grid" autocomplete="off">
-          <div class="field">
-            <label for="ugtCash">Total UGT Value Converted to Cash (₱)</label>
-            <input id="ugtCash" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
-          </div>
-          <div class="field">
-            <label for="bankBalance">Total Balance on the Bank (₱)</label>
-            <input id="bankBalance" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
-          </div>
-          <div class="field">
-            <label for="salesForDeposit">Total Sales for Deposit (₱)</label>
-            <input id="salesForDeposit" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
-          </div>
-          <div class="field full">
-            <button class="btn success full" type="submit">Update Fund Health</button>
-            <p class="hint">Healthy means total available funds cover the outstanding balance with at least 10% buffer. Watch means covered but buffer is below 10%. Critical means funds are below outstanding balance.</p>
-          </div>
-        </form>
-
-        <div class="fund-result" aria-label="Fund health result">
-          <div class="fund-box"><span>Total Funds Available</span><strong id="fundTotalAvailable">₱0.00</strong></div>
-          <div class="fund-box"><span>Outstanding to Cover</span><strong id="fundOutstanding">₱0.00</strong></div>
-          <div class="fund-box"><span>10% Buffer Target</span><strong id="fundBufferTarget">₱0.00</strong></div>
-          <div class="fund-box"><span>Coverage / Shortfall</span><strong id="fundCoverage">₱0.00</strong></div>
-          <div class="fund-box"><span>Bank After Full Pay</span><strong id="fundBankAfterPay">₱0.00</strong></div>
-          <div class="fund-status-card neutral" id="fundStatusCard">
-            <strong id="fundStatusText">SET FUNDS</strong>
-            <p id="fundStatusDetail">Enter fund values to check if funds are healthy.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel report-panel" id="transactionReportPanel">
-      <div class="panel-header">
-        <h2>Date Coverage A4 Transaction Report</h2>
-        <p>Select a coverage period, generate total transactions inside that date range, then print the A4 report.</p>
-      </div>
-      <div class="panel-body">
-        <form id="reportForm" class="report-controls" autocomplete="off">
-          <div class="field">
-            <label for="reportStartDate">Coverage From</label>
-            <input id="reportStartDate" type="date" required />
-          </div>
-          <div class="field">
-            <label for="reportEndDate">Coverage To</label>
-            <input id="reportEndDate" type="date" required />
-          </div>
-          <button class="btn success" type="submit">Generate A4 Report</button>
-          <button class="btn dark" type="button" id="printReportBtn" disabled>Print A4</button>
-        </form>
-        <div class="report-output" id="reportOutput">
-          <div class="empty">Select date coverage, then tap Generate A4 Report.</div>
-        </div>
-      </div>
-    </section>
 
     <main class="grid">
       <section class="panel" id="purchasePanel">
@@ -1565,7 +1139,7 @@
       </div>
     </section>
 
-    <p class="footer-note">Online-ready mobile app. Currency: Philippine pesos (PHP ₱). Includes fund-health check for UGT cash, bank balance, and sales for deposit.</p>
+    <p class="footer-note">Online-ready mobile app. Currency: Philippine pesos (PHP ₱).</p>
         </div>
       </div>
     </section>
@@ -1573,7 +1147,6 @@
 
   <script>
     const STORAGE_KEY = 'fuel_atl_payment_iphone_php_v5_atl_fund_health';
-    const CLOUD_PIN_KEY = 'fuel_atl_cloud_pin';
     ['fuel_purchase_payment_test_index_v1','fuel_purchase_payment_test_index_php_v2','fuel_atl_payment_iphone_php_v1','fuel_atl_payment_iphone_php_v3_capacity_price','fuel_atl_payment_iphone_php_v4_fund_health'].forEach(k => localStorage.removeItem(k));
     const PRODUCTS = ['Premium', 'Regular', 'Diesel'];
 
@@ -1598,33 +1171,6 @@
       purchaseList: document.getElementById('purchaseList'),
       searchBox: document.getElementById('searchBox'),
       statusFilter: document.getElementById('statusFilter'),
-      fundForm: document.getElementById('fundForm'),
-      ugtCash: document.getElementById('ugtCash'),
-      bankBalance: document.getElementById('bankBalance'),
-      salesForDeposit: document.getElementById('salesForDeposit'),
-      fundTotalAvailable: document.getElementById('fundTotalAvailable'),
-      fundOutstanding: document.getElementById('fundOutstanding'),
-      fundBufferTarget: document.getElementById('fundBufferTarget'),
-      fundCoverage: document.getElementById('fundCoverage'),
-      fundBankAfterPay: document.getElementById('fundBankAfterPay'),
-      fundStatusCard: document.getElementById('fundStatusCard'),
-      fundStatusText: document.getElementById('fundStatusText'),
-      fundStatusDetail: document.getElementById('fundStatusDetail'),
-      cloudStatus: document.getElementById('cloudStatus'),
-      syncBtn: document.getElementById('syncBtn'),
-      pinBtn: document.getElementById('pinBtn'),
-      loadSampleBtn: document.getElementById('loadSampleBtn'),
-      reportJumpBtn: document.getElementById('reportJumpBtn'),
-      importBtn: document.getElementById('importBtn'),
-      importFile: document.getElementById('importFile'),
-      exportBtn: document.getElementById('exportBtn'),
-      resetBtn: document.getElementById('resetBtn'),
-      transactionReportPanel: document.getElementById('transactionReportPanel'),
-      reportForm: document.getElementById('reportForm'),
-      reportStartDate: document.getElementById('reportStartDate'),
-      reportEndDate: document.getElementById('reportEndDate'),
-      reportOutput: document.getElementById('reportOutput'),
-      printReportBtn: document.getElementById('printReportBtn'),
       summaryOutstanding: document.getElementById('summaryOutstanding'),
       summaryOpen: document.getElementById('summaryOpen'),
       summaryPurchase: document.getElementById('summaryPurchase'),
@@ -1637,51 +1183,9 @@
 
     let state = loadState();
     let selectedAttachment = null;
-    let activeReportRange = null;
-    const cloud = {
-      available: false,
-      configured: false,
-      pin: localStorage.getItem(CLOUD_PIN_KEY) || '',
-      saveTimer: null
-    };
 
     function today() {
       return new Date().toISOString().slice(0, 10);
-    }
-
-    function addDays(dateString, days) {
-      const date = new Date(dateString + 'T00:00:00');
-      date.setDate(date.getDate() + days);
-      return date.toISOString().slice(0, 10);
-    }
-
-    function displayDate(dateString) {
-      if (!dateString) return '-';
-      const date = new Date(dateString + 'T00:00:00');
-      if (Number.isNaN(date.getTime())) return dateString;
-      return date.toLocaleDateString('en-PH', { month: 'short', day: '2-digit', year: 'numeric' });
-    }
-
-    function isDateWithinCoverage(dateString, startDate, endDate) {
-      if (!dateString || !startDate || !endDate) return false;
-      return dateString >= startDate && dateString <= endDate;
-    }
-
-    function transactionDateValues() {
-      const dates = [];
-      state.purchases.forEach(purchase => {
-        if (purchase.purchaseDate) dates.push(purchase.purchaseDate);
-        (purchase.payments || []).forEach(payment => {
-          if (payment.date) dates.push(payment.date);
-        });
-      });
-      return dates.sort();
-    }
-
-    function setDefaultReportDates() {
-      const dates = transactionDateValues();
-      els.reportStartDate.value = els.reportStartDate.value || dates[0] || today();
-      els.reportEndDate.value = els.reportEndDate.value || dates[dates.length - 1] || today();
     }
 
     function makeId(prefix) {
@@ -1750,19 +1254,14 @@
       return `${base}-${suffix}`;
     }
 
-    function defaultFunds() {
-      return { ugtCash: 0, bankBalance: 0, salesForDeposit: 0, updatedAt: '' };
-    }
-
     function defaultState() {
-      return { purchases: [], funds: defaultFunds() };
+      return { purchases: [] };
     }
 
     function normalizeState(value) {
       const parsed = value && typeof value === 'object' ? value : {};
       return {
-        purchases: Array.isArray(parsed.purchases) ? parsed.purchases.map(normalizePurchase) : [],
-        funds: { ...defaultFunds(), ...(parsed.funds || {}) }
+        purchases: Array.isArray(parsed.purchases) ? parsed.purchases.map(normalizePurchase) : []
       };
     }
 
@@ -1783,7 +1282,6 @@
 
     function saveState() {
       saveLocalState();
-      scheduleCloudSave();
     }
 
     function showNotice(message, type = 'success') {
@@ -1793,107 +1291,6 @@
       showNotice.timer = window.setTimeout(() => {
         els.notice.className = 'notice';
       }, 6000);
-    }
-
-    function setCloudStatus(label, level = 'local') {
-      els.cloudStatus.textContent = label;
-      els.cloudStatus.className = `cloud-pill ${level}`;
-    }
-
-    async function cloudRequest(method, payload) {
-      const headers = { 'Content-Type': 'application/json' };
-      if (cloud.pin) headers['x-app-pin'] = cloud.pin;
-      const options = { method, headers };
-      if (payload) options.body = JSON.stringify({ payload });
-
-      const response = await fetch('/api/state', options);
-      let data = null;
-      try {
-        data = await response.json();
-      } catch (error) {
-        data = null;
-      }
-      return { response, data };
-    }
-
-    async function loadCloudState(showSuccess = false) {
-      setCloudStatus('Checking cloud', 'syncing');
-      try {
-        const { response, data } = await cloudRequest('GET');
-        if (!data || response.status === 404) {
-          cloud.available = false;
-          cloud.configured = false;
-          setCloudStatus('Local mode', 'local');
-          return;
-        }
-
-        cloud.available = true;
-        cloud.configured = Boolean(data.configured);
-
-        if (response.status === 401) {
-          setCloudStatus('Cloud PIN needed', 'needs-pin');
-          showNotice('Cloud sync is protected. Tap Cloud PIN, enter the app PIN, then sync again.', 'info');
-          return;
-        }
-
-        if (!response.ok) {
-          setCloudStatus(data.configured === false ? 'Connect Supabase' : 'Cloud error', data.configured === false ? 'needs-pin' : 'error');
-          if (showSuccess) showNotice(data.message || 'Cloud sync is not available yet.', 'error');
-          return;
-        }
-
-        state = normalizeState(data.payload || defaultState());
-        saveLocalState();
-        setFundInputsFromState();
-        renderAll();
-        setCloudStatus('Online sync', 'online');
-        if (showSuccess) showNotice('Cloud data loaded from Supabase.', 'success');
-      } catch (error) {
-        cloud.available = false;
-        cloud.configured = false;
-        setCloudStatus('Local mode', 'local');
-        if (showSuccess) showNotice('Cloud sync is unavailable, so the app is using local offline data.', 'info');
-      }
-    }
-
-    function scheduleCloudSave() {
-      if (!cloud.available || !cloud.configured) return;
-      window.clearTimeout(cloud.saveTimer);
-      cloud.saveTimer = window.setTimeout(saveCloudState, 600);
-    }
-
-    async function saveCloudState() {
-      if (!cloud.available || !cloud.configured) return;
-      setCloudStatus('Saving cloud', 'syncing');
-      try {
-        const { response, data } = await cloudRequest('PUT', normalizeState(state));
-        if (response.status === 401) {
-          setCloudStatus('Cloud PIN needed', 'needs-pin');
-          showNotice('Cloud save needs the app PIN. Local data is still saved on this iPhone/browser.', 'info');
-          return;
-        }
-        if (!response.ok) {
-          setCloudStatus('Cloud error', 'error');
-          showNotice((data && data.message) || 'Cloud save failed. Local data is still saved.', 'error');
-          return;
-        }
-        setCloudStatus('Online sync', 'online');
-      } catch (error) {
-        setCloudStatus('Cloud error', 'error');
-        showNotice('Cloud save failed. Local data is still saved.', 'error');
-      }
-    }
-
-    function updateCloudPin() {
-      const nextPin = prompt('Cloud access PIN', cloud.pin);
-      if (nextPin === null) return;
-      cloud.pin = nextPin.trim();
-      if (cloud.pin) {
-        localStorage.setItem(CLOUD_PIN_KEY, cloud.pin);
-      } else {
-        localStorage.removeItem(CLOUD_PIN_KEY);
-      }
-      loadCloudState(true);
     }
 
     function lineTotal(line) {
@@ -1957,7 +1354,6 @@
       const current = today();
       els.purchaseDate.value = els.purchaseDate.value || current;
       els.paymentDate.value = els.paymentDate.value || current;
-      setDefaultReportDates();
     }
 
     function renderAll() {
@@ -1965,7 +1361,6 @@
       renderPaymentOptions();
       renderSummary();
       renderPurchases();
-      if (activeReportRange) renderCoverageReport(null, false);
     }
 
     function renderPaymentOptions() {
@@ -2019,67 +1414,6 @@
       return { totalPurchase, totalPaid, outstanding, credit, openCount, paymentCount, productStats, totalLitres };
     }
 
-    function getFundDraft() {
-      return {
-        ugtCash: roundMoney(numberValue(els.ugtCash.value)),
-        bankBalance: roundMoney(numberValue(els.bankBalance.value)),
-        salesForDeposit: roundMoney(numberValue(els.salesForDeposit.value))
-      };
-    }
-
-    function setFundInputsFromState() {
-      const funds = { ...defaultFunds(), ...(state.funds || {}) };
-      els.ugtCash.value = funds.ugtCash ? funds.ugtCash : '';
-      els.bankBalance.value = funds.bankBalance ? funds.bankBalance : '';
-      els.salesForDeposit.value = funds.salesForDeposit ? funds.salesForDeposit : '';
-    }
-
-    function fundHealth(outstanding) {
-      const funds = getFundDraft();
-      const totalAvailable = roundMoney(funds.ugtCash + funds.bankBalance + funds.salesForDeposit);
-      const coverage = roundMoney(totalAvailable - outstanding);
-      const bankAfterPay = roundMoney(funds.bankBalance - outstanding);
-      const bufferTarget = roundMoney(outstanding * 1.10);
-      const bufferCoverage = roundMoney(totalAvailable - bufferTarget);
-      let level = 'neutral';
-      let label = 'SET FUNDS';
-      let detail = 'Enter UGT cash, bank balance, and sales for deposit to check fund health.';
-
-      if (outstanding <= 0.009) {
-        if (totalAvailable > 0.009) {
-          level = 'healthy';
-          label = 'HEALTHY';
-          detail = `No open ATL balance. Available funds are ${money(totalAvailable)}.`;
-        }
-      } else if (totalAvailable + 0.009 < outstanding) {
-        level = 'critical';
-        label = 'CRITICAL';
-        detail = `Funds are short by ${money(Math.abs(coverage))} versus open ATL balances and below the ${money(bufferTarget)} buffer target.`;
-      } else if (totalAvailable + 0.009 < bufferTarget) {
-        level = 'watch';
-        label = 'WATCH';
-        detail = `Funds cover ATL balances, but buffer is below 10%. Extra buffer needed: ${money(Math.abs(bufferCoverage))}.`;
-      } else {
-        level = 'healthy';
-        label = 'HEALTHY';
-        detail = `Funds cover ATL balances plus the 10% buffer. Buffer surplus: ${money(bufferCoverage)}.`;
-      }
-
-      return { ...funds, totalAvailable, coverage, bankAfterPay, bufferTarget, bufferCoverage, level, label, detail };
-    }
-
-    function renderFundHealth(outstanding) {
-      const health = fundHealth(outstanding);
-      els.fundTotalAvailable.textContent = money(health.totalAvailable);
-      els.fundOutstanding.textContent = money(outstanding);
-      els.fundBufferTarget.textContent = money(health.bufferTarget);
-      els.fundCoverage.textContent = money(health.coverage);
-      els.fundBankAfterPay.textContent = money(health.bankAfterPay);
-      els.fundStatusText.textContent = health.label;
-      els.fundStatusDetail.textContent = health.detail;
-      els.fundStatusCard.className = `fund-status-card ${health.level}`;
-    }
-
     function renderSummary() {
       const totals = calculateTotals();
 
@@ -2090,9 +1424,9 @@
       els.summaryPayment.textContent = money(totals.totalPaid);
       els.summaryPaymentCount.textContent = `${totals.paymentCount} payment record${totals.paymentCount === 1 ? '' : 's'}`;
       els.summaryLitres.textContent = litres(totals.totalLitres);
-      els.summaryLitresNote.textContent = totals.totalLitres > 0 ? `${PRODUCTS.length} fuel products combined` : '0 liters registered';
-
-      renderFundHealth(totals.outstanding);
+      els.summaryLitresNote.innerHTML = PRODUCTS.map(product => `
+        <span>${product} <strong>${litres(totals.productStats[product].litres)}</strong></span>
+      `).join('');
 
       const selected = selectedPurchase();
       if (selected) {
@@ -2123,7 +1457,7 @@
       });
 
       if (!purchases.length) {
-        els.purchaseList.innerHTML = '<div class="empty">No ATL records found. Execute a purchase or tap Load Sample.</div>';
+        els.purchaseList.innerHTML = '<div class="empty">No ATL records yet. Execute a purchase to register the first ATL.</div>';
         return;
       }
 
@@ -2191,223 +1525,6 @@
           <span>${escapeHtml(payment.method || 'Payment')} • Ref: ${escapeHtml(payment.reference || '-')} • ${attachment}</span>
         </div>
       `;
-    }
-
-    function lineSummary(lines) {
-      return normalizeLines(lines)
-        .filter(line => numberValue(line.litres) > 0 || numberValue(line.unitPrice) > 0)
-        .map(line => `${line.product}: ${litres(line.litres)} @ ${money(line.unitPrice)}/L`)
-        .join('; ') || 'No product lines';
-    }
-
-    function calculateCoverageReport(startDate, endDate) {
-      const productStats = Object.fromEntries(PRODUCTS.map(product => [product, { litres: 0, value: 0 }]));
-      const transactions = [];
-      const purchaseIds = new Set();
-      const paymentPurchaseIds = new Set();
-      let purchaseTotalAmount = 0;
-      let paymentTotalAmount = 0;
-      let purchaseCount = 0;
-      let paymentCount = 0;
-
-      state.purchases.forEach(purchase => {
-        const atlNumber = purchaseAtlNumber(purchase);
-        const supplier = purchase.supplier || '-';
-
-        if (isDateWithinCoverage(purchase.purchaseDate, startDate, endDate)) {
-          const total = purchaseTotal(purchase);
-          const lines = normalizeLines(purchase.lines);
-          purchaseTotalAmount += total;
-          purchaseCount += 1;
-          purchaseIds.add(purchase.id);
-          lines.forEach(line => {
-            if (productStats[line.product]) {
-              productStats[line.product].litres += numberValue(line.litres);
-              productStats[line.product].value += lineTotal(line);
-            }
-          });
-          transactions.push({
-            date: purchase.purchaseDate,
-            type: 'purchase',
-            atlNumber,
-            supplier,
-            detail: lineSummary(lines),
-            purchaseAmount: total,
-            paymentAmount: 0
-          });
-        }
-
-        (purchase.payments || []).forEach(payment => {
-          if (!isDateWithinCoverage(payment.date, startDate, endDate)) return;
-          const amount = roundMoney(numberValue(payment.amount));
-          paymentTotalAmount += amount;
-          paymentCount += 1;
-          paymentPurchaseIds.add(purchase.id);
-          transactions.push({
-            date: payment.date,
-            type: 'payment',
-            atlNumber,
-            supplier,
-            detail: `${payment.method || 'Payment'} • Ref: ${payment.reference || '-'}`,
-            purchaseAmount: 0,
-            paymentAmount: amount
-          });
-        });
-      });
-
-      transactions.sort((a, b) => {
-        const dateCompare = String(a.date || '').localeCompare(String(b.date || ''));
-        if (dateCompare) return dateCompare;
-        const typeOrder = { purchase: 0, payment: 1 };
-        return typeOrder[a.type] - typeOrder[b.type];
-      });
-
-      const totalProductLitres = PRODUCTS.reduce((sum, product) => sum + productStats[product].litres, 0);
-      const grossTransactionValue = roundMoney(purchaseTotalAmount + paymentTotalAmount);
-      const netPayableMovement = roundMoney(purchaseTotalAmount - paymentTotalAmount);
-
-      return {
-        startDate,
-        endDate,
-        productStats,
-        totalProductLitres,
-        transactions,
-        purchaseTotalAmount: roundMoney(purchaseTotalAmount),
-        paymentTotalAmount: roundMoney(paymentTotalAmount),
-        grossTransactionValue,
-        netPayableMovement,
-        purchaseCount,
-        paymentCount,
-        transactionCount: purchaseCount + paymentCount,
-        purchaseAtlCount: purchaseIds.size,
-        paymentAtlCount: paymentPurchaseIds.size
-      };
-    }
-
-    function renderCoverageReport(event, shouldScroll = true) {
-      if (event) event.preventDefault();
-      const startDate = els.reportStartDate.value;
-      const endDate = els.reportEndDate.value;
-
-      if (!startDate || !endDate) {
-        showNotice('Please select both coverage dates for the A4 report.', 'error');
-        return;
-      }
-
-      if (startDate > endDate) {
-        showNotice('Coverage From must be on or before Coverage To.', 'error');
-        els.reportStartDate.focus();
-        return;
-      }
-
-      activeReportRange = { startDate, endDate };
-      const report = calculateCoverageReport(startDate, endDate);
-      const productRows = PRODUCTS.map(product => {
-        const stat = report.productStats[product];
-        const avgPrice = stat.litres ? stat.value / stat.litres : 0;
-        return `
-          <tr>
-            <td>${escapeHtml(product)}</td>
-            <td>${litres(stat.litres)}</td>
-            <td>${money(avgPrice)}/L</td>
-            <td class="money-col">${money(stat.value)}</td>
-          </tr>
-        `;
-      }).join('');
-
-      const transactionRows = report.transactions.length
-        ? report.transactions.map(transaction => `
-          <tr>
-            <td>${displayDate(transaction.date)}</td>
-            <td><span class="transaction-type ${transaction.type}">${transaction.type}</span></td>
-            <td>
-              <strong>ATL ${escapeHtml(transaction.atlNumber)}</strong><br />
-              ${escapeHtml(transaction.supplier)}
-            </td>
-            <td>${escapeHtml(transaction.detail)}</td>
-            <td class="money-col">${transaction.purchaseAmount ? money(transaction.purchaseAmount) : '-'}</td>
-            <td class="money-col">${transaction.paymentAmount ? money(transaction.paymentAmount) : '-'}</td>
-          </tr>
-        `).join('')
-        : '<tr><td colspan="6">No purchase or payment transactions found inside this coverage period.</td></tr>';
-
-      els.reportOutput.innerHTML = `
-        <article class="a4-report" aria-label="A4 transaction report">
-          <header class="a4-report-head">
-            <div class="a4-title-row">
-              <div class="report-logo" aria-hidden="true"></div>
-              <div>
-                <h3>Fuel ATL Transaction Report</h3>
-                <p>Generated ${displayDate(today())}. Totals include purchase transactions by purchase date and payment transactions by payment date.</p>
-              </div>
-            </div>
-            <div class="period-badge">${displayDate(report.startDate)} to ${displayDate(report.endDate)}</div>
-          </header>
-
-          <section class="a4-kpis" aria-label="Covered period totals">
-            <div class="a4-kpi"><span>Gross Transaction Value</span><strong>${money(report.grossTransactionValue)}</strong></div>
-            <div class="a4-kpi"><span>Purchase Total</span><strong>${money(report.purchaseTotalAmount)}</strong></div>
-            <div class="a4-kpi"><span>Payment Total</span><strong>${money(report.paymentTotalAmount)}</strong></div>
-            <div class="a4-kpi"><span>Net Payable Movement</span><strong>${money(report.netPayableMovement)}</strong></div>
-            <div class="a4-kpi"><span>Transactions</span><strong>${report.transactionCount}</strong></div>
-            <div class="a4-kpi"><span>Purchase ATLs</span><strong>${report.purchaseAtlCount}</strong></div>
-            <div class="a4-kpi"><span>Payment ATLs</span><strong>${report.paymentAtlCount}</strong></div>
-            <div class="a4-kpi"><span>Product Capacity</span><strong>${litres(report.totalProductLitres)}</strong></div>
-          </section>
-
-          <div class="a4-report-grid">
-            <section class="report-section">
-              <span class="report-section-title">Product Purchases In Coverage</span>
-              <table class="report-table" aria-label="Product totals by date coverage">
-                <thead><tr><th>Product</th><th>Liters</th><th>Avg Price</th><th>Total</th></tr></thead>
-                <tbody>${productRows}</tbody>
-              </table>
-            </section>
-
-            <section class="report-section">
-              <span class="report-section-title">Period Summary</span>
-              <table class="report-table" aria-label="Covered period summary">
-                <tbody>
-                  <tr><th>Coverage From</th><td>${displayDate(report.startDate)}</td></tr>
-                  <tr><th>Coverage To</th><td>${displayDate(report.endDate)}</td></tr>
-                  <tr><th>Purchase Entries</th><td>${report.purchaseCount}</td></tr>
-                  <tr><th>Payment Entries</th><td>${report.paymentCount}</td></tr>
-                  <tr><th>Total Transactions</th><td>${report.transactionCount}</td></tr>
-                </tbody>
-              </table>
-            </section>
-          </div>
-
-          <section class="report-section">
-            <span class="report-section-title">Transaction List</span>
-            <table class="report-table" aria-label="Transactions inside selected date coverage">
-              <thead><tr><th>Date</th><th>Type</th><th>ATL / Supplier</th><th>Details</th><th>Purchase</th><th>Payment</th></tr></thead>
-              <tbody>${transactionRows}</tbody>
-            </table>
-          </section>
-
-          <p class="a4-footer-note">Net Payable Movement = purchase total minus payment total for the selected date coverage. Current ATL balances may differ when payments or purchases fall outside this report period.</p>
-        </article>
-      `;
-
-      els.printReportBtn.disabled = false;
-      if (shouldScroll) {
-        els.reportOutput.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        showNotice(`A4 report generated for ${displayDate(startDate)} to ${displayDate(endDate)}.`, 'success');
-      }
-    }
-
-    function jumpToReportPanel() {
-      els.transactionReportPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      window.setTimeout(() => els.reportStartDate.focus(), 350);
-    }
-
-    function printCoverageReport() {
-      if (!activeReportRange) {
-        renderCoverageReport(null, false);
-      }
-      if (!activeReportRange) return;
-      window.setTimeout(() => window.print(), 100);
     }
 
     function resetPurchaseForm() {
@@ -2578,137 +1695,6 @@
       showNotice(`Payment ${money(amount)} added to ATL ${purchaseAtlNumber(purchase)}.`, 'success');
     }
 
-    function loadSample() {
-      const purchase = {
-        id: makeId('PUR'),
-        supplier: 'Mabuhay Fuel Depot',
-        atlNumber: uniqueAtlNumber('ATL-1050'),
-        purchaseDate: today(),
-        notes: 'Sample ATL purchase with Premium, Regular, and Diesel liter capacity and price per liter. Payment can be staggered later.',
-        lines: [
-          { product: 'Premium', litres: 4000, unitPrice: 67.50 },
-          { product: 'Regular', litres: 6000, unitPrice: 64.20 },
-          { product: 'Diesel', litres: 8000, unitPrice: 59.80 }
-        ],
-        payments: [
-          {
-            id: makeId('PAY'),
-            date: today(),
-            amount: 500000,
-            method: 'Bank Transfer',
-            reference: 'BDO-DEP-0001',
-            attachmentName: 'sample-bank-deposit-slip.txt',
-            attachmentType: 'text/plain',
-            attachmentSize: 99,
-            attachmentData: 'data:text/plain;charset=utf-8,' + encodeURIComponent('Sample Philippine Bank Deposit Slip\nSupplier: Mabuhay Fuel Depot\nReference: BDO-DEP-0001\nAmount: ₱500,000.00'),
-            createdAt: new Date().toISOString()
-          }
-        ],
-        createdAt: new Date().toISOString()
-      };
-      state.purchases.push(purchase);
-      state.funds = {
-        ugtCash: 350000,
-        bankBalance: 820000,
-        salesForDeposit: 250000,
-        updatedAt: new Date().toISOString()
-      };
-      setFundInputsFromState();
-      saveState();
-      els.paymentPurchaseId.value = purchase.id;
-      renderAll();
-      openPaymentPanel();
-      showNotice('Sample ATL loaded. You can now add another dated payment and attach a slip.', 'info');
-    }
-
-    function stateFromImportedJson(value) {
-      if (Array.isArray(value)) return { purchases: value, funds: defaultFunds() };
-      if (value && typeof value === 'object') {
-        if (value.payload) return stateFromImportedJson(value.payload);
-        if (value.state) return stateFromImportedJson(value.state);
-        return value;
-      }
-      return null;
-    }
-
-    function hasImportData(nextState) {
-      const funds = { ...defaultFunds(), ...(nextState.funds || {}) };
-      return nextState.purchases.length > 0 ||
-        numberValue(funds.ugtCash) > 0 ||
-        numberValue(funds.bankBalance) > 0 ||
-        numberValue(funds.salesForDeposit) > 0;
-    }
-
-    async function importJsonFile(event) {
-      const file = event.target.files && event.target.files[0] ? event.target.files[0] : null;
-      if (!file) return;
-
-      try {
-        const parsed = JSON.parse(await file.text());
-        const imported = stateFromImportedJson(parsed);
-        const nextState = normalizeState(imported);
-        if (!hasImportData(nextState)) {
-          showNotice('Uploaded JSON did not contain ATL purchases, payments, or fund values.', 'error');
-          return;
-        }
-
-        if (state.purchases.length && !confirm('Replace current app data with the uploaded JSON?')) {
-          showNotice('Upload cancelled. Current app data was not changed.', 'info');
-          return;
-        }
-
-        state = nextState;
-        selectedAttachment = null;
-        activeReportRange = null;
-        saveState();
-        setFundInputsFromState();
-        resetPurchaseForm();
-        resetPaymentForm(false);
-        els.reportOutput.innerHTML = '<div class="empty">Select date coverage, then tap Generate A4 Report.</div>';
-        els.printReportBtn.disabled = true;
-        renderAll();
-
-        const totals = calculateTotals();
-        showNotice(`Upload registered: ${state.purchases.length} ATL record${state.purchases.length === 1 ? '' : 's'}, ${totals.paymentCount} payment${totals.paymentCount === 1 ? '' : 's'}, ${litres(totals.totalLitres)} saved.`, 'success');
-      } catch (error) {
-        showNotice('Upload failed. Please choose a valid exported app JSON file.', 'error');
-      } finally {
-        els.importFile.value = '';
-      }
-    }
-
-    function exportJson() {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'fuel-atl-purchase-payment-export.json';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function resetApp() {
-      if (!confirm('Reset all purchases and payments for this app?')) return;
-      state = defaultState();
-      selectedAttachment = null;
-      localStorage.removeItem(STORAGE_KEY);
-      saveState();
-      resetPurchaseForm();
-      resetPaymentForm(false);
-      renderAll();
-      showNotice('App data reset.', 'info');
-    }
-
-    function updateFundHealth(event) {
-      event.preventDefault();
-      state.funds = { ...getFundDraft(), updatedAt: new Date().toISOString() };
-      saveState();
-      renderSummary();
-      showNotice('Fund health updated. The system checked UGT cash, bank balance, and sales for deposit against outstanding ATL balances.', 'success');
-    }
-
     function handleListClick(event) {
       const selectBtn = event.target.closest('[data-select-purchase]');
       const deleteBtn = event.target.closest('[data-delete-purchase]');
@@ -2741,20 +1727,8 @@
 
     els.purchaseForm.addEventListener('submit', executePurchase);
     els.paymentForm.addEventListener('submit', updatePayment);
-    els.fundForm.addEventListener('submit', updateFundHealth);
-    [els.ugtCash, els.bankBalance, els.salesForDeposit].forEach(input => input.addEventListener('input', renderSummary));
     els.searchBox.addEventListener('input', renderPurchases);
     els.statusFilter.addEventListener('change', renderPurchases);
-    els.syncBtn.addEventListener('click', () => loadCloudState(true));
-    els.pinBtn.addEventListener('click', updateCloudPin);
-    els.loadSampleBtn.addEventListener('click', loadSample);
-    els.reportJumpBtn.addEventListener('click', jumpToReportPanel);
-    els.reportForm.addEventListener('submit', renderCoverageReport);
-    els.printReportBtn.addEventListener('click', printCoverageReport);
-    els.importBtn.addEventListener('click', () => els.importFile.click());
-    els.importFile.addEventListener('change', importJsonFile);
-    els.exportBtn.addEventListener('click', exportJson);
-    els.resetBtn.addEventListener('click', resetApp);
     els.purchaseList.addEventListener('click', handleListClick);
 
     els.depositSlip.addEventListener('change', async () => {
@@ -2772,9 +1746,7 @@
     });
 
     setDefaultDates();
-    setFundInputsFromState();
     renderAll();
-    loadCloudState();
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js').catch(() => {});
     }
