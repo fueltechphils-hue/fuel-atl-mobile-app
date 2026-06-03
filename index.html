@@ -1133,6 +1133,8 @@
 
   <script>
     const STORAGE_KEY = 'fuel_atl_payment_iphone_php_v5_atl_fund_health';
+    const CLOUD_PIN_KEY = 'fuel_atl_payment_cloud_pin_v1';
+    const CLOUD_STATE_URL = '/api/state';
     ['fuel_purchase_payment_test_index_v1','fuel_purchase_payment_test_index_php_v2','fuel_atl_payment_iphone_php_v1','fuel_atl_payment_iphone_php_v3_capacity_price','fuel_atl_payment_iphone_php_v4_fund_health'].forEach(k => localStorage.removeItem(k));
     const PRODUCTS = ['Premium', 'Regular', 'Diesel'];
 
@@ -1167,6 +1169,9 @@
 
     let state = loadState();
     let selectedAttachment = null;
+    let cloudPin = localStorage.getItem(CLOUD_PIN_KEY) || '';
+    let cloudReady = false;
+    let cloudSaveTimer = null;
 
     function today() {
       return new Date().toISOString().slice(0, 10);
@@ -1255,8 +1260,49 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
+    async function saveCloudState({ quiet = false } = {}) {
+      if (!cloudReady || !cloudPin) return false;
+
+      try {
+        const response = await fetch(CLOUD_STATE_URL, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-app-pin': cloudPin
+          },
+          body: JSON.stringify({ payload: normalizeState(state) })
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (response.status === 401 && data.needsPin) {
+          cloudReady = false;
+          localStorage.removeItem(CLOUD_PIN_KEY);
+          cloudPin = '';
+          if (!quiet) showNotice('Cloud PIN was rejected. Data is saved on this device only.', 'error');
+          return false;
+        }
+
+        if (!response.ok) {
+          if (!quiet) showNotice(data.message || 'Cloud save failed. Data is saved on this device only.', 'error');
+          return false;
+        }
+
+        if (!quiet) showNotice('Saved to shared cloud database.', 'success');
+        return true;
+      } catch (error) {
+        if (!quiet) showNotice('Cloud save failed. Data is saved on this device only.', 'error');
+        return false;
+      }
+    }
+
+    function queueCloudSave() {
+      window.clearTimeout(cloudSaveTimer);
+      cloudSaveTimer = window.setTimeout(() => saveCloudState({ quiet: true }), 500);
+    }
+
     function saveState() {
       saveLocalState();
+      queueCloudSave();
     }
 
     function showNotice(message, type = 'success') {
@@ -1266,6 +1312,103 @@
       showNotice.timer = window.setTimeout(() => {
         els.notice.className = 'notice';
       }, 6000);
+    }
+
+    function normalizePaymentKey(payment) {
+      return String(payment && payment.id ? payment.id : [
+        payment?.date || '',
+        payment?.amount || '',
+        payment?.method || '',
+        payment?.reference || '',
+        payment?.attachmentName || ''
+      ].join('|')).trim();
+    }
+
+    function mergePayments(left = [], right = []) {
+      const merged = [];
+      const seen = new Set();
+
+      [...left, ...right].forEach(payment => {
+        if (!payment || typeof payment !== 'object') return;
+        const key = normalizePaymentKey(payment);
+        if (seen.has(key)) return;
+        seen.add(key);
+        merged.push(payment);
+      });
+
+      return merged;
+    }
+
+    function mergePurchase(left, right) {
+      const base = { ...(left || {}), ...(right || {}) };
+      return normalizePurchase({
+        ...base,
+        lines: normalizeLines((right && right.lines) || (left && left.lines)),
+        payments: mergePayments(left && left.payments, right && right.payments)
+      });
+    }
+
+    function mergeStates(localValue, cloudValue) {
+      const localState = normalizeState(localValue);
+      const cloudState = normalizeState(cloudValue);
+      const byKey = new Map();
+
+      [...cloudState.purchases, ...localState.purchases].forEach(purchase => {
+        const key = purchase.id || normalizeAtlKey(purchaseAtlNumber(purchase));
+        if (!key) return;
+        byKey.set(key, byKey.has(key) ? mergePurchase(byKey.get(key), purchase) : normalizePurchase(purchase));
+      });
+
+      return { purchases: [...byKey.values()] };
+    }
+
+    async function requestCloudPin(message = 'Enter Fuel ATL cloud PIN to sync records across phone and Codex/Mac:') {
+      const pin = window.prompt(message, cloudPin || '');
+      if (!pin) return '';
+      cloudPin = pin.trim();
+      localStorage.setItem(CLOUD_PIN_KEY, cloudPin);
+      return cloudPin;
+    }
+
+    async function fetchCloudState({ askForPin = true } = {}) {
+      const headers = cloudPin ? { 'x-app-pin': cloudPin } : {};
+      const response = await fetch(CLOUD_STATE_URL, { headers });
+      const data = await response.json().catch(() => ({}));
+
+      if (response.status === 401 && data.needsPin && askForPin) {
+        localStorage.removeItem(CLOUD_PIN_KEY);
+        cloudPin = '';
+        const pin = await requestCloudPin();
+        if (!pin) return null;
+        return fetchCloudState({ askForPin: false });
+      }
+
+      if (!response.ok || !data.configured) {
+        throw new Error(data.message || 'Cloud database is unavailable.');
+      }
+
+      return normalizeState(data.payload);
+    }
+
+    async function initializeCloudState() {
+      try {
+        const localState = loadState();
+        const cloudState = await fetchCloudState();
+        if (!cloudState) {
+          showNotice('Cloud sync skipped. Device backup is still active.', 'error');
+          return;
+        }
+
+        state = mergeStates(localState, cloudState);
+        saveLocalState();
+        cloudReady = true;
+        renderAll();
+        await saveCloudState({ quiet: true });
+        showNotice(`Cloud database connected. ${state.purchases.length} ATL record${state.purchases.length === 1 ? '' : 's'} synced.`, 'success');
+      } catch (error) {
+        cloudReady = false;
+        showNotice('Cloud database unavailable. Data is saved on this device only.', 'error');
+      }
     }
 
     function lineTotal(line) {
@@ -1459,7 +1602,7 @@
       };
     }
 
-    function executePurchase(event) {
+    async function executePurchase(event) {
       event.preventDefault();
       const lines = getDraftLines().map(line => ({
         product: line.product,
@@ -1511,6 +1654,7 @@
 
       state.purchases.push(purchase);
       saveState();
+      await saveCloudState({ quiet: true });
       resetPurchaseForm();
       els.paymentPurchaseId.value = purchase.id;
       els.paymentAmount.value = '';
@@ -1574,6 +1718,7 @@
 
       try {
         saveState();
+        await saveCloudState({ quiet: true });
       } catch (error) {
         purchase.payments.pop();
         showNotice('Could not save payment. The attached slip may be too large for browser local storage.', 'error');
@@ -1615,6 +1760,7 @@
 
     setDefaultDates();
     renderAll();
+    initializeCloudState();
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js').catch(() => {});
     }
