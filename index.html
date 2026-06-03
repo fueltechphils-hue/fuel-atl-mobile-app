@@ -191,32 +191,8 @@
     }
 
     .iphone-screen .summary-card.outstanding-card {
-      grid-column: 1 / -1;
-      min-height: 260px;
-      padding: 34px;
-      color: #ffffff;
-      background: linear-gradient(135deg, #0f172a, #1d4ed8 58%, #2563eb);
-      border-color: rgba(255, 255, 255, 0.14);
-      box-shadow: 0 30px 70px rgba(37, 99, 235, 0.30);
-    }
-
-    .iphone-screen .summary-card.outstanding-card .summary-label {
-      color: rgba(255, 255, 255, 0.78);
-      font-size: 1.18rem;
-      letter-spacing: 0.13em;
-    }
-
-    .iphone-screen .summary-card.outstanding-card .summary-value {
-      margin-top: 14px;
-      font-size: clamp(4.2rem, 10vw, 7.2rem);
-      line-height: 0.92;
-      letter-spacing: -0.085em;
-    }
-
-    .iphone-screen .summary-card.outstanding-card .summary-note {
-      margin-top: 24px;
-      color: rgba(255, 255, 255, 0.84);
-      font-size: 1.25rem;
+      border-color: rgba(37, 99, 235, 0.28);
+      box-shadow: 0 18px 42px rgba(37, 99, 235, 0.14);
     }
 
     .iphone-screen .panel {
@@ -353,7 +329,7 @@
     h1 {
       margin: 0;
       font-size: clamp(1.3rem, 3.8vw, 2rem);
-      letter-spacing: -0.05em;
+      letter-spacing: 0;
       line-height: 1.05;
     }
 
@@ -415,7 +391,7 @@
 
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(145px, 1fr));
+      grid-template-columns: repeat(4, minmax(145px, 1fr));
       gap: 12px;
       margin-bottom: 18px;
     }
@@ -430,22 +406,8 @@
     }
 
     .summary-card.outstanding-card {
-      grid-column: span 2;
-      min-height: 136px;
-      color: #ffffff;
-      background: linear-gradient(135deg, #0f172a, #1d4ed8 58%, #2563eb);
-      border-color: rgba(255, 255, 255, 0.16);
-      box-shadow: 0 26px 58px rgba(37, 99, 235, 0.26);
-    }
-
-    .summary-card.outstanding-card .summary-label,
-    .summary-card.outstanding-card .summary-note {
-      color: rgba(255, 255, 255, 0.82);
-    }
-
-    .summary-card.outstanding-card .summary-value {
-      font-size: clamp(2.35rem, 5vw, 3.8rem);
-      line-height: 0.95;
+      border-color: rgba(37, 99, 235, 0.28);
+      box-shadow: 0 18px 42px rgba(37, 99, 235, 0.14);
     }
 
     .summary-label {
@@ -461,7 +423,7 @@
       margin: 0;
       font-size: clamp(1.35rem, 3.2vw, 1.9rem);
       font-weight: 950;
-      letter-spacing: -0.05em;
+      letter-spacing: 0;
     }
 
     .summary-note {
@@ -495,7 +457,7 @@
     .panel-header h2 {
       margin: 0;
       font-size: 1.1rem;
-      letter-spacing: -0.035em;
+      letter-spacing: 0;
     }
 
     .panel-header p {
@@ -678,7 +640,7 @@
     .purchase-title {
       margin: 0;
       font-size: 1rem;
-      letter-spacing: -0.03em;
+      letter-spacing: 0;
     }
 
     .purchase-meta {
@@ -718,7 +680,7 @@
       background: #fff;
     }
     .amount-box span { display: block; color: var(--muted); font-size: 0.76rem; font-weight: 950; text-transform: uppercase; letter-spacing: 0.05em; }
-    .amount-box strong { display: block; margin-top: 4px; font-size: 1rem; letter-spacing: -0.03em; }
+    .amount-box strong { display: block; margin-top: 4px; font-size: 1rem; letter-spacing: 0; }
 
     .mini-table {
       width: 100%;
@@ -816,7 +778,7 @@
     .a4-report h3 {
       margin: 0;
       font-size: 1.28rem;
-      letter-spacing: -0.04em;
+      letter-spacing: 0;
     }
 
     .a4-report p {
@@ -867,7 +829,7 @@
       display: block;
       margin-top: 5px;
       font-size: 1.1rem;
-      letter-spacing: -0.035em;
+      letter-spacing: 0;
     }
 
     .a4-report-grid {
@@ -988,7 +950,7 @@
       display: block;
       margin-top: 5px;
       font-size: 1.08rem;
-      letter-spacing: -0.035em;
+      letter-spacing: 0;
     }
 
     .fund-status-card {
@@ -1003,7 +965,7 @@
 
     .fund-status-card strong {
       font-size: 1.42rem;
-      letter-spacing: -0.05em;
+      letter-spacing: 0;
     }
 
     .fund-status-card p {
@@ -1104,7 +1066,7 @@
 
     .iphone-screen h1 {
       font-size: clamp(1.3rem, 3.8vw, 2rem);
-      letter-spacing: -0.05em;
+      letter-spacing: 0;
       line-height: 1.05;
     }
 
@@ -1125,7 +1087,7 @@
     }
 
     .iphone-screen .summary-grid {
-      grid-template-columns: repeat(5, minmax(145px, 1fr));
+      grid-template-columns: repeat(4, minmax(145px, 1fr));
       gap: 12px;
       margin-bottom: 18px;
     }
@@ -1138,37 +1100,13 @@
 
     .iphone-screen .summary-value {
       font-size: clamp(1.35rem, 3.2vw, 1.9rem);
-      letter-spacing: -0.05em;
+      letter-spacing: 0;
       line-height: normal;
     }
 
     .iphone-screen .summary-card.outstanding-card {
-      grid-column: span 2;
-      min-height: 136px;
-      padding: 16px;
-      color: #ffffff;
-      background: linear-gradient(135deg, #0f172a, #1d4ed8 58%, #2563eb);
-      border-color: rgba(255, 255, 255, 0.16);
-      box-shadow: 0 26px 58px rgba(37, 99, 235, 0.26);
-    }
-
-    .iphone-screen .summary-card.outstanding-card .summary-label {
-      color: rgba(255, 255, 255, 0.82);
-      font-size: 0.78rem;
-      letter-spacing: 0.08em;
-    }
-
-    .iphone-screen .summary-card.outstanding-card .summary-value {
-      margin-top: 0;
-      font-size: clamp(2.35rem, 5vw, 3.8rem);
-      line-height: 0.95;
-      letter-spacing: -0.05em;
-    }
-
-    .iphone-screen .summary-card.outstanding-card .summary-note {
-      margin-top: 8px;
-      color: rgba(255, 255, 255, 0.82);
-      font-size: 0.86rem;
+      border-color: rgba(37, 99, 235, 0.28);
+      box-shadow: 0 18px 42px rgba(37, 99, 235, 0.14);
     }
 
     .iphone-screen .grid { grid-template-columns: 1fr 1fr; }
@@ -1213,12 +1151,10 @@
 
     @media (max-width: 900px) {
       .summary-grid { grid-template-columns: repeat(2, 1fr); }
-      .summary-card.outstanding-card { grid-column: 1 / -1; }
       .grid { grid-template-columns: 1fr; }
       .brand-row { align-items: flex-start; flex-direction: column; }
       .toolbar { justify-content: flex-start; }
       .iphone-screen .summary-grid { grid-template-columns: repeat(2, 1fr); }
-      .iphone-screen .summary-card.outstanding-card { grid-column: 1 / -1; }
       .iphone-screen .grid { grid-template-columns: 1fr; }
       .iphone-screen .brand-row { align-items: flex-start; flex-direction: column; }
       .iphone-screen .toolbar { justify-content: flex-start; width: 100%; }
@@ -1380,42 +1316,34 @@
           <button class="btn secondary" type="button" id="pinBtn">Cloud PIN</button>
           <button class="btn secondary" type="button" id="loadSampleBtn">Load Sample</button>
           <button class="btn secondary" type="button" id="reportJumpBtn">A4 Report</button>
+          <button class="btn secondary" type="button" id="importBtn">Upload JSON</button>
           <button class="btn dark" type="button" id="exportBtn">Export JSON</button>
           <button class="btn danger" type="button" id="resetBtn">Reset</button>
+          <input id="importFile" type="file" accept=".json,application/json" hidden />
         </div>
       </div>
     </header>
 
     <section class="summary-grid" aria-label="Total summary">
+      <article class="summary-card">
+        <p class="summary-label">Total Purchase</p>
+        <p class="summary-value" id="summaryPurchase">₱0.00</p>
+        <p class="summary-note" id="summaryPurchaseCount">0 ATL records</p>
+      </article>
+      <article class="summary-card">
+        <p class="summary-label">Total Payment</p>
+        <p class="summary-value" id="summaryPayment">₱0.00</p>
+        <p class="summary-note" id="summaryPaymentCount">0 payment records</p>
+      </article>
       <article class="summary-card outstanding-card">
         <p class="summary-label">Outstanding Balance</p>
         <p class="summary-value" id="summaryOutstanding">₱0.00</p>
-        <p class="summary-note" id="summaryOpen">0 open purchases</p>
-      </article>
-      <article class="summary-card fund-card neutral" id="summaryFundCard">
-        <p class="summary-label">Fund Health</p>
-        <p class="summary-value" id="summaryFundStatus">SET FUNDS</p>
-        <p class="summary-note" id="summaryFundNote">Enter UGT cash, bank balance, and sales for deposit.</p>
+        <p class="summary-note" id="summaryOpen">0 open ATL records</p>
       </article>
       <article class="summary-card">
-        <p class="summary-label">Total Purchases</p>
-        <p class="summary-value" id="summaryPurchase">₱0.00</p>
-        <p class="summary-note" id="summaryPurchaseCount">0 purchase records</p>
-      </article>
-      <article class="summary-card">
-        <p class="summary-label">Total Payments</p>
-        <p class="summary-value" id="summaryPayment">₱0.00</p>
-        <p class="summary-note" id="summaryCredit">₱0.00 supplier credit</p>
-      </article>
-      <article class="summary-card">
-        <p class="summary-label">Product Capacity</p>
+        <p class="summary-label">Total Liters</p>
         <p class="summary-value" id="summaryLitres">0 L</p>
-        <p class="summary-note" id="summaryProductBreakdown">Premium 0 L @ ₱0.00/L • Regular 0 L @ ₱0.00/L • Diesel 0 L @ ₱0.00/L</p>
-      </article>
-      <article class="summary-card">
-        <p class="summary-label">Selected Balance</p>
-        <p class="summary-value" id="summarySelectedBalance">₱0.00</p>
-        <p class="summary-note" id="summarySelectedLabel">No purchase selected</p>
+        <p class="summary-note" id="summaryLitresNote">0 products registered</p>
       </article>
     </section>
 
@@ -1687,6 +1615,8 @@
       pinBtn: document.getElementById('pinBtn'),
       loadSampleBtn: document.getElementById('loadSampleBtn'),
       reportJumpBtn: document.getElementById('reportJumpBtn'),
+      importBtn: document.getElementById('importBtn'),
+      importFile: document.getElementById('importFile'),
       exportBtn: document.getElementById('exportBtn'),
       resetBtn: document.getElementById('resetBtn'),
       transactionReportPanel: document.getElementById('transactionReportPanel'),
@@ -1697,17 +1627,12 @@
       printReportBtn: document.getElementById('printReportBtn'),
       summaryOutstanding: document.getElementById('summaryOutstanding'),
       summaryOpen: document.getElementById('summaryOpen'),
-      summaryFundCard: document.getElementById('summaryFundCard'),
-      summaryFundStatus: document.getElementById('summaryFundStatus'),
-      summaryFundNote: document.getElementById('summaryFundNote'),
       summaryPurchase: document.getElementById('summaryPurchase'),
       summaryPurchaseCount: document.getElementById('summaryPurchaseCount'),
       summaryPayment: document.getElementById('summaryPayment'),
-      summaryCredit: document.getElementById('summaryCredit'),
+      summaryPaymentCount: document.getElementById('summaryPaymentCount'),
       summaryLitres: document.getElementById('summaryLitres'),
-      summaryProductBreakdown: document.getElementById('summaryProductBreakdown'),
-      summarySelectedBalance: document.getElementById('summarySelectedBalance'),
-      summarySelectedLabel: document.getElementById('summarySelectedLabel')
+      summaryLitresNote: document.getElementById('summaryLitresNote')
     };
 
     let state = loadState();
@@ -2067,6 +1992,7 @@
       let outstanding = 0;
       let credit = 0;
       let openCount = 0;
+      let paymentCount = 0;
       const productStats = Object.fromEntries(PRODUCTS.map(product => [product, { litres: 0, value: 0 }]));
 
       state.purchases.forEach(purchase => {
@@ -2075,6 +2001,7 @@
         const balance = purchaseBalance(purchase);
         totalPurchase += pTotal;
         totalPaid += paid;
+        paymentCount += Array.isArray(purchase.payments) ? purchase.payments.length : 0;
         if (balance > 0.009) {
           outstanding += balance;
           openCount += 1;
@@ -2089,7 +2016,7 @@
       });
 
       const totalLitres = PRODUCTS.reduce((sum, product) => sum + productStats[product].litres, 0);
-      return { totalPurchase, totalPaid, outstanding, credit, openCount, productStats, totalLitres };
+      return { totalPurchase, totalPaid, outstanding, credit, openCount, paymentCount, productStats, totalLitres };
     }
 
     function getFundDraft() {
@@ -2151,40 +2078,28 @@
       els.fundStatusText.textContent = health.label;
       els.fundStatusDetail.textContent = health.detail;
       els.fundStatusCard.className = `fund-status-card ${health.level}`;
-      els.summaryFundStatus.textContent = health.label;
-      els.summaryFundNote.textContent = `Available ${money(health.totalAvailable)} • Buffer target ${money(health.bufferTarget)}`;
-      els.summaryFundCard.className = `summary-card fund-card ${health.level}`;
     }
 
     function renderSummary() {
       const totals = calculateTotals();
 
       els.summaryOutstanding.textContent = money(totals.outstanding);
-      els.summaryOpen.textContent = `${totals.openCount} open purchase${totals.openCount === 1 ? '' : 's'}`;
+      els.summaryOpen.textContent = `${totals.openCount} open ATL record${totals.openCount === 1 ? '' : 's'}`;
       els.summaryPurchase.textContent = money(totals.totalPurchase);
-      els.summaryPurchaseCount.textContent = `${state.purchases.length} purchase record${state.purchases.length === 1 ? '' : 's'}`;
+      els.summaryPurchaseCount.textContent = `${state.purchases.length} ATL record${state.purchases.length === 1 ? '' : 's'}`;
       els.summaryPayment.textContent = money(totals.totalPaid);
-      els.summaryCredit.textContent = `${money(totals.credit)} supplier credit`;
+      els.summaryPaymentCount.textContent = `${totals.paymentCount} payment record${totals.paymentCount === 1 ? '' : 's'}`;
       els.summaryLitres.textContent = litres(totals.totalLitres);
-      els.summaryProductBreakdown.textContent = PRODUCTS.map(product => {
-        const stat = totals.productStats[product];
-        const avgPrice = stat.litres ? stat.value / stat.litres : 0;
-        return `${product} ${litres(stat.litres)} @ ${money(avgPrice)}/L`;
-      }).join(' • ');
+      els.summaryLitresNote.textContent = totals.totalLitres > 0 ? `${PRODUCTS.length} fuel products combined` : '0 liters registered';
 
       renderFundHealth(totals.outstanding);
 
       const selected = selectedPurchase();
       if (selected) {
-        els.summarySelectedBalance.textContent = money(purchaseBalance(selected));
-        els.summarySelectedLabel.textContent = `ATL ${purchaseAtlNumber(selected)} • ${selected.supplier}`;
         if (!els.paymentAmount.value) {
           const bal = Math.max(0, purchaseBalance(selected));
           els.paymentAmount.placeholder = bal ? bal.toFixed(2) : '0.00';
         }
-      } else {
-        els.summarySelectedBalance.textContent = money(0);
-        els.summarySelectedLabel.textContent = 'No purchase selected';
       }
     }
 
@@ -2706,6 +2621,62 @@
       showNotice('Sample ATL loaded. You can now add another dated payment and attach a slip.', 'info');
     }
 
+    function stateFromImportedJson(value) {
+      if (Array.isArray(value)) return { purchases: value, funds: defaultFunds() };
+      if (value && typeof value === 'object') {
+        if (value.payload) return stateFromImportedJson(value.payload);
+        if (value.state) return stateFromImportedJson(value.state);
+        return value;
+      }
+      return null;
+    }
+
+    function hasImportData(nextState) {
+      const funds = { ...defaultFunds(), ...(nextState.funds || {}) };
+      return nextState.purchases.length > 0 ||
+        numberValue(funds.ugtCash) > 0 ||
+        numberValue(funds.bankBalance) > 0 ||
+        numberValue(funds.salesForDeposit) > 0;
+    }
+
+    async function importJsonFile(event) {
+      const file = event.target.files && event.target.files[0] ? event.target.files[0] : null;
+      if (!file) return;
+
+      try {
+        const parsed = JSON.parse(await file.text());
+        const imported = stateFromImportedJson(parsed);
+        const nextState = normalizeState(imported);
+        if (!hasImportData(nextState)) {
+          showNotice('Uploaded JSON did not contain ATL purchases, payments, or fund values.', 'error');
+          return;
+        }
+
+        if (state.purchases.length && !confirm('Replace current app data with the uploaded JSON?')) {
+          showNotice('Upload cancelled. Current app data was not changed.', 'info');
+          return;
+        }
+
+        state = nextState;
+        selectedAttachment = null;
+        activeReportRange = null;
+        saveState();
+        setFundInputsFromState();
+        resetPurchaseForm();
+        resetPaymentForm(false);
+        els.reportOutput.innerHTML = '<div class="empty">Select date coverage, then tap Generate A4 Report.</div>';
+        els.printReportBtn.disabled = true;
+        renderAll();
+
+        const totals = calculateTotals();
+        showNotice(`Upload registered: ${state.purchases.length} ATL record${state.purchases.length === 1 ? '' : 's'}, ${totals.paymentCount} payment${totals.paymentCount === 1 ? '' : 's'}, ${litres(totals.totalLitres)} saved.`, 'success');
+      } catch (error) {
+        showNotice('Upload failed. Please choose a valid exported app JSON file.', 'error');
+      } finally {
+        els.importFile.value = '';
+      }
+    }
+
     function exportJson() {
       const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -2780,6 +2751,8 @@
     els.reportJumpBtn.addEventListener('click', jumpToReportPanel);
     els.reportForm.addEventListener('submit', renderCoverageReport);
     els.printReportBtn.addEventListener('click', printCoverageReport);
+    els.importBtn.addEventListener('click', () => els.importFile.click());
+    els.importFile.addEventListener('change', importJsonFile);
     els.exportBtn.addEventListener('click', exportJson);
     els.resetBtn.addEventListener('click', resetApp);
     els.purchaseList.addEventListener('click', handleListClick);
